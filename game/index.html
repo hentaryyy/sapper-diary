@@ -1314,6 +1314,8 @@ const Music = (() => {
       (recs || []).sort((a, b) => a.added - b.added).forEach(r => {
         if (!custom.some(c => c.id === r.id)) custom.push({id: r.id, name: r.name, style: 'свой трек', bpm: 120, url: URL.createObjectURL(r.blob)});
       });
+      // если на устройстве есть свой mp3 — он играет первым (последний выбранный или первый добавленный)
+      if (custom.length && !playing) { const last = custom.find(c => c.id === save.trackId); curId = (last || custom[0]).id; }
       radioUI();
     }).catch(() => {});
   }
