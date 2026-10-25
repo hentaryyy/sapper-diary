@@ -1128,8 +1128,8 @@ const TrackDB = (() => {
 // ---- YouTube: список по умолчанию. Чтобы добавить свои ссылки — допиши строки сюда ----
 // title — как трек будет называться в игре, url — обычная ссылка с YouTube, bpm — темп для танца кота (необязательно)
 const YT_PRESETS = [
-  {title:'lofi girl — lofi hip hop radio', url:'https://www.youtube.com/watch?v=jfKfPfyJRdk', bpm:80},
   {title:'Crystal Castles — подборка', url:'https://youtu.be/m_ZeOmmE_ec', bpm:120},
+  {title:'lofi girl — lofi hip hop radio', url:'https://www.youtube.com/watch?v=jfKfPfyJRdk', bpm:80},
   {title:'lofi girl — synthwave radio', url:'https://www.youtube.com/watch?v=4xDzrJKXOOY', bpm:100},
 ];
 function parseYT(s) {
@@ -1189,7 +1189,9 @@ const TV = (() => {
 const Music = (() => {
   TRACKS.forEach((t, i) => { t.id = 'b' + i; });
   let ac = null, eng = null, out = null, timer = null, step = 0, nextT = 0, loop = 0, audio = null;
-  let playing = false, curId = save.trackId || ('b' + Math.max(0, Math.min(save.track | 0, TRACKS.length - 1)));
+  // при каждом запуске игры первым играет джем Crystal Castles
+  const START_TRACK = 'yt:video:m_ZeOmmE_ec';
+  let playing = false, curId = START_TRACK;
   const custom = [];
   let ytUser = []; try { ytUser = JSON.parse(localStorage.getItem('sapper-yt') || '[]').filter(o => o && o.ref); } catch (e) {}
   const saveYT = () => { try { localStorage.setItem('sapper-yt', JSON.stringify(ytUser)); } catch (e) {} };
