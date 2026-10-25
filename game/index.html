@@ -1173,8 +1173,8 @@ const TV = (() => {
   function show(tr) {
     const q = 'autoplay=1&playsinline=1&rel=0&modestbranding=1';
     const src = tr.yt.kind === 'list'
-      ? `https://www.youtube-nocookie.com/embed/videoseries?list=${tr.yt.ref}&${q}`
-      : `https://www.youtube-nocookie.com/embed/${tr.yt.ref}?${q}&loop=1&playlist=${tr.yt.ref}`;
+      ? `https://www.youtube.com/embed/videoseries?list=${tr.yt.ref}&${q}`
+      : `https://www.youtube.com/embed/${tr.yt.ref}?${q}&loop=1&playlist=${tr.yt.ref}`;
     el.querySelector('.tvt').textContent = tr.name;
     if (location.protocol === 'file:') {
       el.querySelector('.tvs').innerHTML = `<div class="tvmsg"><b>YouTube не играет в файле с компьютера</b>Он работает, только когда игра открыта по ссылке (GitHub Pages или Telegram). Встроенные треки и свой mp3 работают везде.</div>`;
