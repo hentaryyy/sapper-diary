@@ -282,19 +282,7 @@ body.sensing .closed{cursor:crosshair}
 .tdel{font-style:normal;display:inline-block;margin-left:10px;padding:2px 8px;background:#A8323A;color:#fff;font-weight:900;font-size:14px;line-height:1.2}
 .tsec{font-family:var(--px);font-size:8px;color:var(--cream);margin:8px 2px 0;line-height:1.5;text-shadow:0 2px 0 #000}
 .ytadd{display:flex;flex-direction:column;gap:8px}
-.ytrow{display:flex;gap:8px}
-.ytrow input{flex:1;min-width:0;font:inherit;font-weight:800;font-size:15px;padding:10px;border:3px solid var(--earth);background:#fff;color:var(--earth);border-radius:0;-webkit-user-select:text;user-select:text}
-.ytrow .btn{font-size:16px;padding:8px 14px}
 .ynote{font-size:12px;font-weight:800;color:#E8DCC8;line-height:1.4}
-.tv{position:fixed;z-index:29;display:none;width:214px;background:#120E1A;border:3px solid #000;box-shadow:0 6px 0 rgba(0,0,0,.4)}
-.tv.show{display:block;animation:rise .25s ease-out}
-.tvbar{display:flex;align-items:center;gap:6px;padding:4px 4px 4px 8px;background:linear-gradient(90deg,#EE2A3C,#5EC8E5);cursor:grab;touch-action:none}
-.tvt{flex:1;min-width:0;font-weight:900;font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #000}
-.tvx{width:26px;height:24px;border:2px solid #000;background:#120E1A;color:#fff;font-weight:900;font-size:15px;padding:0;line-height:1}
-.tvs{width:208px;height:200px;background:#000}
-.tvmsg{padding:14px 12px;color:#F1D3A2;font-size:13px;font-weight:700;line-height:1.4}
-.tvmsg b{display:block;color:#fff;font-weight:900;margin-bottom:6px}
-.tvs iframe{width:100%;height:100%;border:0;display:block}
 .sndi{display:block;width:22px;height:18px;background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:crisp-edges;image-rendering:pixelated;background-image:var(--spr-spk)}
 .sndi.off{background-image:var(--spr-spkx)}
 @keyframes catdance{from{background-position:0 0}to{background-position:calc(-80px * var(--s)) 0}}
@@ -1125,80 +1113,13 @@ const TrackDB = (() => {
   }
   return {all: () => tx('readonly', st => st.getAll()), put: rec => tx('readwrite', st => st.put(rec)), del: id => tx('readwrite', st => st.delete(id))};
 })();
-// ---- YouTube: список по умолчанию. Чтобы добавить свои ссылки — допиши строки сюда ----
-// title — как трек будет называться в игре, url — обычная ссылка с YouTube, bpm — темп для танца кота (необязательно)
-const YT_PRESETS = [
-  {title:'Crystal Castles — подборка', url:'https://youtu.be/m_ZeOmmE_ec', bpm:120},
-  {title:'lofi girl — lofi hip hop radio', url:'https://www.youtube.com/watch?v=jfKfPfyJRdk', bpm:80},
-  {title:'lofi girl — synthwave radio', url:'https://www.youtube.com/watch?v=4xDzrJKXOOY', bpm:100},
-];
-function parseYT(s) {
-  s = String(s || '').trim(); if (!s) return null;
-  let u; try { u = new URL(/^https?:\/\//i.test(s) ? s : 'https://' + s); } catch (e) { return null; }
-  const host = u.hostname.replace(/^(www|m|music)\./, '');
-  let v = null;
-  if (host === 'youtu.be') v = u.pathname.split('/')[1];
-  else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
-    v = u.searchParams.get('v');
-    const m = u.pathname.match(/^\/(embed|live|shorts|v)\/([A-Za-z0-9_-]{11})/); if (!v && m) v = m[2];
-  } else return null;
-  if (v && /^[A-Za-z0-9_-]{11}$/.test(v)) return {kind: 'video', ref: v};
-  const list = u.searchParams.get('list');
-  if (list && /^[A-Za-z0-9_-]{10,}$/.test(list)) return {kind: 'list', ref: list};
-  return null;
-}
-// окошко с плеером YouTube: правила YouTube требуют, чтобы видео было видно (не меньше 200×200)
-const TV = (() => {
-  const el = document.createElement('div'); el.className = 'tv';
-  el.innerHTML = `<div class="tvbar"><span class="tvt"></span><button class="tvx" data-a="toggle" aria-label="Выключить">×</button></div><div class="tvs"></div>`;
-  document.body.appendChild(el);
-  const bar = el.querySelector('.tvbar');
-  let pos = null; try { pos = JSON.parse(localStorage.getItem('sapper-tvpos') || 'null'); } catch (e) {}
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  function place() {
-    const w = el.offsetWidth, h = el.offsetHeight;
-    const x = pos ? pos.x : innerWidth - w - 10, y = pos ? pos.y : innerHeight - h - 175;
-    el.style.left = clamp(x, 4, innerWidth - w - 4) + 'px'; el.style.top = clamp(y, 4, innerHeight - h - 4) + 'px';
-  }
-  let drag = null;
-  bar.addEventListener('pointerdown', e => {
-    if (e.target.closest('button')) return;
-    const r = el.getBoundingClientRect(); drag = {dx: e.clientX - r.left, dy: e.clientY - r.top};
-    try { bar.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault();
-  });
-  bar.addEventListener('pointermove', e => { if (!drag) return; pos = {x: e.clientX - drag.dx, y: e.clientY - drag.dy}; place(); });
-  const endDrag = () => { if (!drag) return; drag = null; try { localStorage.setItem('sapper-tvpos', JSON.stringify(pos)); } catch (e) {} };
-  bar.addEventListener('pointerup', endDrag); bar.addEventListener('pointercancel', endDrag);
-  addEventListener('resize', () => { if (el.classList.contains('show')) place(); });
-  function show(tr) {
-    const q = 'autoplay=1&playsinline=1&rel=0&modestbranding=1';
-    const src = tr.yt.kind === 'list'
-      ? `https://www.youtube.com/embed/videoseries?list=${tr.yt.ref}&${q}`
-      : `https://www.youtube.com/embed/${tr.yt.ref}?${q}&loop=1&playlist=${tr.yt.ref}`;
-    el.querySelector('.tvt').textContent = tr.name;
-    if (location.protocol === 'file:') {
-      el.querySelector('.tvs').innerHTML = `<div class="tvmsg"><b>YouTube не играет в файле с компьютера</b>Он работает, только когда игра открыта по ссылке (GitHub Pages или Telegram). Встроенные треки и свой mp3 работают везде.</div>`;
-      el.classList.add('show'); place(); return;
-    }
-    el.querySelector('.tvs').innerHTML = `<iframe src="${src}" title="${esc(tr.name)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
-    el.classList.add('show'); place();
-  }
-  function hide() { el.classList.remove('show'); el.querySelector('.tvs').innerHTML = ''; }
-  return {show, hide, get open() { return el.classList.contains('show'); }};
-})();
 const Music = (() => {
   TRACKS.forEach((t, i) => { t.id = 'b' + i; });
   let ac = null, eng = null, out = null, timer = null, step = 0, nextT = 0, loop = 0, audio = null;
-  // при каждом запуске игры первым играет джем Crystal Castles
-  const START_TRACK = 'yt:video:m_ZeOmmE_ec';
-  let playing = false, curId = START_TRACK;
+  let playing = false, curId = TRACKS[0].id;
   const custom = [];
-  let ytUser = []; try { ytUser = JSON.parse(localStorage.getItem('sapper-yt') || '[]').filter(o => o && o.ref); } catch (e) {}
-  const saveYT = () => { try { localStorage.setItem('sapper-yt', JSON.stringify(ytUser)); } catch (e) {} };
-  const ytId = o => 'yt:' + o.kind + ':' + o.ref;
-  const presets = YT_PRESETS.map(p => { const y = parseYT(p.url); return y && Object.assign(y, {title: p.title, bpm: p.bpm}); }).filter(Boolean);
-  const ytItem = (o, user) => ({id: ytId(o), name: o.title || 'YouTube', style: 'YouTube', bpm: o.bpm || 86, yt: {kind: o.kind, ref: o.ref}, user});
-  const list = () => TRACKS.concat(presets.map(o => ytItem(o, false)), ytUser.map(o => ytItem(o, true)), custom);
+  try { localStorage.removeItem('sapper-yt'); localStorage.removeItem('sapper-tvpos'); } catch (e) {}
+  const list = () => TRACKS.concat(custom);
   const curIndex = () => { const i = list().findIndex(t => t.id === curId); return i < 0 ? 0 : i; };
   const cur = () => list()[curIndex()];
   function ensure() {
@@ -1210,7 +1131,7 @@ const Music = (() => {
     } catch (e) { ac = null; return false; }
   }
   function tick() {
-    const tr = cur(); if (!tr || tr.url || tr.yt || !ac) return;
+    const tr = cur(); if (!tr || tr.url || !ac) return;
     if (nextT < ac.currentTime - .3) nextT = ac.currentTime + .05;
     while (nextT < ac.currentTime + .2) {
       eng.schedule(tr, step, nextT, loop);
@@ -1231,13 +1152,11 @@ const Music = (() => {
     if (audio) { const t = cur(); if (t && t.url) savePos(t.id, audio.currentTime); audio.pause(); audio = null; }
     if (eng) eng.vinyl(false);
     if (ac) { out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(0, ac.currentTime, .1); }
-    TV.hide();
   }
   function startCur() {
     halt();
     const tr = cur(); curId = tr.id; save.trackId = tr.id; persist();
-    if (tr.yt) TV.show(tr);
-    else if (tr.url) {
+    if (tr.url) {
       audio = new Audio(tr.url); audio.volume = .85;
       audio.onended = () => {
         savePos(tr.id, 0);
@@ -1263,7 +1182,6 @@ const Music = (() => {
     playing = false; save.music = false; persist();
     if (ac) { out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(0, ac.currentTime, .12); }
     if (audio) audio.pause();
-    TV.hide();
     setTimeout(() => { if (!playing) halt(); }, 600);
     radioUI();
   }
@@ -1283,28 +1201,11 @@ const Music = (() => {
     curId = first; play();
     toast(files.length > 1 ? `Добавлено треков: ${files.length}. Они сохранятся на этом устройстве` : 'Трек добавлен и сохранён на этом устройстве', 3000);
   }
-  function addYT(link) {
-    const y = parseYT(link);
-    if (!y) { toast('Это не похоже на ссылку YouTube', 2500); haptic('err'); return false; }
-    const id = ytId(y);
-    if (!list().some(t => t.id === id)) {
-      const o = {kind: y.kind, ref: y.ref, title: y.kind === 'list' ? 'YouTube-плейлист' : 'YouTube-видео'};
-      ytUser.push(o); saveYT();
-      // название подтягиваем с YouTube, если получится
-      fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(y.kind === 'list' ? 'https://www.youtube.com/playlist?list=' + y.ref : 'https://www.youtube.com/watch?v=' + y.ref)}`)
-        .then(r => r.ok ? r.json() : null).then(j => { if (j && j.title) { o.title = j.title.slice(0, 80); saveYT(); radioUI(); } }).catch(() => {});
-    }
-    curId = id; play(); toast('Ссылка добавлена — она сохранится на этом устройстве', 2500);
-    return true;
-  }
   function remove(i) {
-    const t = list()[i]; if (!t || !(t.user || t.url)) return;
-    if (t.user) { ytUser = ytUser.filter(o => ytId(o) !== t.id); saveYT(); }
-    else {
-      custom.splice(custom.indexOf(t), 1);
-      try { URL.revokeObjectURL(t.url); } catch (e) {}
-      if (window.indexedDB) TrackDB.del(t.id).catch(() => {});
-    }
+    const t = list()[i]; if (!t || !t.url) return;
+    custom.splice(custom.indexOf(t), 1);
+    try { URL.revokeObjectURL(t.url); } catch (e) {}
+    if (window.indexedDB) TrackDB.del(t.id).catch(() => {});
     if (t.id === curId) { curId = TRACKS[0].id; if (playing) startCur(); }
     radioUI(); toast('Удалено');
   }
@@ -1319,12 +1220,12 @@ const Music = (() => {
       radioUI();
     }).catch(() => {});
   }
-  function unlock() { if (ac && playing && ac.state !== 'running' && !cur().yt) { try { ac.resume(); } catch (e) {} } }
+  function unlock() { if (ac && playing && ac.state !== 'running' ) { try { ac.resume(); } catch (e) {} } }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { if (ac) try { ac.suspend(); } catch (e) {} if (audio) audio.pause(); }
     else if (playing) { if (ac) try { ac.resume(); } catch (e) {} if (audio) audio.play().catch(() => {}); }
   });
-  return {play, stop, go, pick, addFiles, addYT, remove, loadSaved, unlock, cur, list, toggle: () => (playing ? stop() : play()),
+  return {play, stop, go, pick, addFiles, remove, loadSaved, unlock, cur, list, toggle: () => (playing ? stop() : play()),
     get playing() { return playing; }, get idx() { return curIndex(); }, get pos() { return audio ? audio.currentTime : -1; }};
 })();
 function radioHTML(big) {
@@ -1334,15 +1235,15 @@ function radioHTML(big) {
       <div class="rctl"><button class="rb" data-a="prev" aria-label="Предыдущий трек"><i style="background-image:var(--spr-prev)"></i></button>
         <button class="rb main" data-a="toggle" aria-label="Музыка вкл/выкл"><i class="ricon"></i></button>
         <button class="rb" data-a="next" aria-label="Следующий трек"><i style="background-image:var(--spr-next)"></i></button></div>
-      <button class="rown" data-a="list">все треки, YouTube и свой mp3 ›</button></div></div>`;
+      <button class="rown" data-a="list">все треки и свой mp3 ›</button></div></div>`;
 }
 function trackListHTML() {
   const ci = Music.idx; let h = '', sec = '';
   Music.list().forEach((t, i) => {
-    const s = t.yt ? 'YouTube' : t.url ? 'Свои mp3' : 'Слайм FM — свои треки игры';
+    const s = t.url ? 'Свои mp3' : 'Слайм FM — треки игры';
     if (s !== sec) { sec = s; h += `<div class="tsec">${s}</div>`; }
     h += `<button class="ti ${i === ci ? 'on' : ''}" data-a="pick" data-i="${i}"><b>${esc(t.name)}</b>` +
-      (t.user || t.url ? `<span>${t.yt ? 'ссылка' : 'mp3'}<i class="tdel" data-a="del" data-i="${i}" aria-label="Удалить">×</i></span>` : `<span>${t.style}</span>`) + `</button>`;
+      (t.url ? `<span>mp3<i class="tdel" data-a="del" data-i="${i}" aria-label="Удалить">×</i></span>` : `<span>${t.style}</span>`) + `</button>`;
   });
   return h;
 }
@@ -1353,7 +1254,7 @@ function radioUI() {
   document.querySelectorAll('.radio').forEach(r => {
     r.classList.toggle('on', on); r.style.setProperty('--beat', beat);
     r.querySelector('.rtrack').textContent = tr.name;
-    r.querySelector('.rsub').textContent = on ? (tr.yt ? 'YouTube · играет в окошке' : tr.style) : (save.music ? 'заиграет после первого нажатия' : 'музыка выключена');
+    r.querySelector('.rsub').textContent = on ? tr.style : (save.music ? 'заиграет после первого нажатия' : 'музыка выключена');
     r.querySelector('.ricon').style.backgroundImage = on ? 'var(--spr-pause)' : 'var(--spr-play)';
   });
   document.querySelectorAll('.catbtn').forEach(b => { b.classList.toggle('on', on); b.style.setProperty('--beat', beat); });
@@ -1365,14 +1266,9 @@ function openRadio() {
   modal(`<div class="mhead">Слайм FM</div>` + radioHTML(true) +
     `<div class="tlist"></div>
      <div class="ytadd"><div class="tsec">Добавить свою музыку</div>
-       <div class="ytrow"><input id="ytUrl" type="url" inputmode="url" autocomplete="off" placeholder="вставь ссылку на YouTube"><button class="btn small green" data-a="ytadd">+</button></div>
        <button class="btn small alt" data-a="own">+ mp3 с телефона или компьютера</button>
-       <div class="ynote">YouTube играет в окошке — его можно перетащить. Закрыть окошко = выключить музыку.</div></div>`,
-    [{text:'Закрыть', v:1, cls:'alt'}], box => {
-      radioUI();
-      const inp = box.querySelector('#ytUrl');
-      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); if (Music.addYT(inp.value)) inp.value = ''; } });
-    });
+       <div class="ynote">Свой mp3 сохраняется на этом устройстве и дальше играет первым.</div></div>`,
+    [{text:'Закрыть', v:1, cls:'alt'}], () => radioUI());
 }
 document.addEventListener('click', e => {
   const b = e.target.closest && e.target.closest('[data-a]'); if (!b) return;
@@ -1384,7 +1280,6 @@ document.addEventListener('click', e => {
   else if (a === 'pick') Music.pick(+b.dataset.i);
   else if (a === 'own') $('#ownFiles').click();
   else if (a === 'list') openRadio();
-  else if (a === 'ytadd') { const inp = $('#ytUrl'); if (inp && Music.addYT(inp.value)) inp.value = ''; }
   else return;
   haptic('light');
 });
@@ -1522,7 +1417,7 @@ function showHelp() {
       <li>Каждые <b>3 страницы</b> — новая способность: Свет, Чутьё, Вторая жизнь.</li>
       <li>Сердца кончились — новое поле. Дневник и способности остаются.</li>
       <li>Большие поля можно <b>приближать двумя пальцами</b>.</li>
-      <li>Кот в углу — это радио: свои треки игры, YouTube по ссылке или свой mp3. Там же музыку можно выключить.</li>
+      <li>Кот в углу — это радио: треки игры или свой mp3. Там же музыку можно выключить.</li>
     </ul></div>`, [{text:'Понятно!', v:1}]);
 }
 
