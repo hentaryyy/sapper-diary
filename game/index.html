@@ -119,6 +119,10 @@ body[data-theme="night"] .hud{color:var(--apricot)}
 .hearts i{background-image:var(--spr-heart)}
 .hearts i.empty{background-image:var(--spr-heart-e)}
 .hearts i.pop{animation:pop .5s}
+.hearts i.gold{background-image:var(--spr-heart-g);filter:drop-shadow(0 0 3px #FFE27A) drop-shadow(0 0 6px rgba(243,182,63,.9));animation:goldp .7s ease-in-out infinite alternate}
+@keyframes goldp{to{transform:scale(1.18)}}
+body.satanic .board{box-shadow:0 0 0 4px #A8323A,0 0 26px 10px rgba(224,86,91,.75);animation:satan .5s ease-in-out infinite alternate}
+@keyframes satan{to{box-shadow:0 0 0 4px #E0565B,0 0 34px 16px rgba(224,86,91,.9)}}
 .stat{display:flex;flex:none;align-items:center;gap:6px;font-family:var(--px);font-size:12px}
 .ico-page{background-image:var(--spr-page)}
 .ico-slime{background-image:var(--spr-slime);width:26px}
@@ -159,7 +163,7 @@ body[data-theme="night"] .hud{color:var(--apricot)}
 body.sensing .closed{cursor:crosshair}
 
 .bottombar{max-width:760px;width:100%;margin:10px auto 0;display:flex;flex-direction:column;gap:8px}
-.abil{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.abil{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .ab{display:flex;align-items:center;gap:8px;padding:7px 8px;text-align:left;background:var(--cream);color:var(--earth);
   border:3px solid var(--earth);box-shadow:0 4px 0 var(--earth);min-width:0;transition:transform .06s,box-shadow .06s,background .2s}
 .ab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--earth)}
@@ -173,7 +177,47 @@ body.sensing .closed{cursor:crosshair}
 .ab.ready{background:#FFF3C9}
 .ab.ready .ai{animation:glow 1.4s ease-in-out infinite alternate}
 .ab.armed{background:#BDEFFA}
-.ab.passive{cursor:default}
+.ab.active{background:#FFE9A8;border-color:#A9531A}
+.ab.active .as{color:#A9531A}
+.ab.active .ai{animation:glow .5s ease-in-out infinite alternate}
+.ab.blocked{background:#EFE6D6}.ab.blocked .as{color:#9A8A78}
+@media (max-width:600px){
+  .abil{gap:6px}
+  .ab{flex-direction:column;justify-content:center;gap:3px;padding:6px 2px;text-align:center}
+  .ab .an{font-size:12px}.ab .as{font-size:7px;margin-top:3px}
+}
+/* ---------- битва ---------- */
+#battle{position:fixed;inset:0;z-index:27;background:#000;display:none;flex-direction:column;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));color:#fff;font-family:var(--px)}
+#battle.show{display:flex}
+.bhud{display:flex;align-items:center;gap:10px;font-size:13px;margin:0 auto 8px;width:100%;max-width:640px}
+.btime{color:#FFE27A;min-width:62px}
+.btime.warn{color:#E0565B;animation:pulse .4s infinite alternate}
+.bgold{width:22px;height:20px;background:var(--spr-heart-g) center/contain no-repeat;image-rendering:crisp-edges;image-rendering:pixelated;filter:drop-shadow(0 0 4px #FFE27A)}
+.bcount{margin-left:auto;font-size:10px;white-space:nowrap}
+.bcount b{font-size:14px;color:#FFE27A}
+.bbar{position:relative;height:14px;border:3px solid #fff;background:#111;margin:0 auto 10px;width:100%;max-width:640px;flex:none}
+#bFill{height:100%;width:0;background:#5EC8E5;transition:width .12s}
+#bFill.ok{background:#8BD15A}
+#bMark{position:absolute;top:-7px;bottom:-7px;width:4px;background:#FFE27A;transform:translateX(-2px)}
+.bbox{position:relative;flex:1;min-height:0;border:4px solid #fff;background:#000;overflow:hidden;width:100%;max-width:640px;margin:0 auto}
+#bcv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+.bbig{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.bt{font-size:30px;color:#FFE27A;text-shadow:4px 4px 0 #A9531A;animation:bigin .35s cubic-bezier(.3,1.7,.5,1)}
+.bt.bad{color:#E0565B;text-shadow:4px 4px 0 #5A1418}
+.bt.go{color:#fff;text-shadow:4px 4px 0 #2E8FB8}
+.bres{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;background:rgba(0,0,0,.84);text-align:center;overflow:auto}
+.bres.show{display:flex}
+.bres img{width:104px;height:78px;image-rendering:crisp-edges;image-rendering:pixelated}
+.bres img.laugh{animation:hop2 .28s ease-in-out infinite alternate}
+.bres img.dizzy{animation:breathe 1.4s ease-in-out infinite}
+.bres .bt{font-size:22px}
+.bs{font-family:var(--txt);font-weight:800;font-size:15px;color:#E8E0D0;max-width:330px;line-height:1.35}
+.taunt{border:3px solid #fff;padding:10px 12px;font-size:11px;line-height:1.8;max-width:330px;text-align:left;color:#fff}
+.bres .btn{min-width:150px}
+.bline{width:100%;max-width:640px;margin:10px auto 0;min-height:3.9em;font-size:11px;line-height:1.7;border:4px solid #fff;padding:8px 10px;flex:none}
+@keyframes bigin{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+@keyframes hop2{to{transform:translateY(-8px)}}
 .ctrl{display:flex;gap:8px;align-items:stretch}
 .mode{flex:1;display:flex;border:3px solid var(--earth);box-shadow:0 4px 0 var(--earth);background:var(--cream)}
 .mode button{flex:1;border:0;background:transparent;padding:9px 6px;font-weight:900;font-size:14px;color:var(--earth);display:flex;align-items:center;justify-content:center;gap:6px}
@@ -343,7 +387,6 @@ body.sensing .closed{cursor:crosshair}
   <div class="hud">
     <img class="rin" id="rinHud" alt="Рин">
     <div class="hearts" id="hearts"><i></i><i></i><i></i></div>
-    <div class="stat" title="Вторая жизнь" id="lifeStat"><i class="hud-ico ico-life" id="lifeIco"></i></div>
     <div class="stat" title="Страниц в дневнике"><i class="hud-ico ico-page"></i><span id="pagesN">0</span></div>
     <div class="stat" title="Слаймов осталось"><i class="hud-ico ico-slime"></i><span id="slimesN">10</span></div>
   </div>
@@ -352,7 +395,8 @@ body.sensing .closed{cursor:crosshair}
     <div class="abil">
       <button class="ab" id="abLight"><i class="ai" style="background-image:var(--spr-light)"></i><div><div class="an">Свет</div><div class="as">3 стр.</div></div></button>
       <button class="ab" id="abSense"><i class="ai" style="background-image:var(--spr-eye)"></i><div><div class="an">Чутьё</div><div class="as">6 стр.</div></div></button>
-      <button class="ab passive" id="abLife"><i class="ai" style="background-image:var(--spr-life)"></i><div><div class="an">2-я жизнь</div><div class="as">9 стр.</div></div></button>
+      <button class="ab" id="abLife"><i class="ai" style="background-image:var(--spr-life)"></i><div><div class="an">2-я жизнь</div><div class="as">9 стр.</div></div></button>
+      <button class="ab" id="abSatan"><i class="ai" style="background-image:var(--spr-devil)"></i><div><div class="an">Satanic</div><div class="as">15 стр.</div></div></button>
     </div>
     <div class="ctrl">
       <button class="catbtn" data-a="list" aria-label="Музыка"><div class="cat" style="--s:2"></div></button>
@@ -379,6 +423,12 @@ body.sensing .closed{cursor:crosshair}
 </section>
 
 <input type="file" id="ownFiles" accept="audio/*" multiple hidden>
+<div id="battle">
+  <div class="bhud"><div class="btime" id="bTime">30 с</div><i class="bgold" id="bGold" title="Золотое сердце"></i><div class="bcount">порезано <b id="bCut">0</b> / <b id="bNeed">20</b></div></div>
+  <div class="bbar"><div id="bFill"></div><i id="bMark"></i></div>
+  <div class="bbox"><canvas id="bcv"></canvas><div class="bbig" id="bBig"></div><div class="bres" id="bRes"></div></div>
+  <div class="bline" id="bLine"></div>
+</div>
 <div id="toast"></div>
 <div id="modal"><div class="mbox" id="mbox"></div></div>
 
@@ -621,9 +671,22 @@ const INEXT = ['c...c', 'cc..c', 'ccc.c', 'ccccc', 'ccc.c', 'cc..c', 'c...c'];
 const IPREV = ['c...c', 'c..cc', 'c.ccc', 'ccccc', 'c.ccc', 'c..cc', 'c...c'];
 const SPK = ['...k.....', '..kk...k.', 'kkkk.k..k', 'kkkk.k..k', 'kkkk.k..k', '..kk...k.', '...k.....'];
 const SPKX = ['...k.....', '..kk.....', 'kkkk.k.k.', 'kkkk..k..', 'kkkk.k.k.', '..kk.....', '...k.....'];
+const DEVIL = [
+'.k.......k.',
+'krk.....krk',
+'krrkkkkkrrk',
+'.krrrrrrrk.',
+'krrkrrrkrrk',
+'krywrrrywrk',
+'krrrrrrrrrk',
+'krrkrrrkrrk',
+'.krrkkkrrk.',
+'..krrrrrk..',
+'...kkkkk...'];
 const SPR = {
   slime: sprite(SLIME), angry: sprite(ANGRY), flag: sprite(FLAG),
-  heart: sprite(HEART), 'heart-e': sprite(HEART, {r:'e', R:'E', w:'e'}),
+  heart: sprite(HEART), 'heart-e': sprite(HEART, {r:'e', R:'E', w:'e'}), 'heart-g': sprite(HEART, {k:'Y', w:'y'}),
+  devil: sprite(DEVIL), bomb: sprite(ANGRY, {b:'r', B:'R', l:'p'}),
   life: sprite(HEART, {r:'o', R:'O'}), page: sprite(PAGE),
   light: sprite(LIGHT), eye: sprite(EYE), boot: sprite(BOOT), strip: stripSprite(),
   t1: sprite(TUFT1), t2: sprite(TUFT2), t3: sprite(FLOWER),
@@ -637,8 +700,8 @@ for (const k in SPR) document.documentElement.style.setProperty('--spr-' + k, `u
    ===================================================== */
 const LEVELS = [
   {id:0, name:'Поле у деревни', time:'утро', theme:'morning', w:8, h:8, slimes:10},
-  {id:1, name:'Лес', time:'закат', theme:'sunset', w:16, h:16, slimes:40},
-  {id:2, name:'Поле у старой башни', time:'ночь со светлячками', theme:'night', w:32, h:32, slimes:150},
+  {id:1, name:'Лес', time:'закат', theme:'sunset', w:12, h:12, slimes:22},
+  {id:2, name:'Поле у старой башни', time:'ночь со светлячками', theme:'night', w:16, h:16, slimes:40},
 ];
 const JOKES = [
   {t:'Наступил на слайма. Мягкий. Обиженный.', tip:'цифра — сколько слаймов в 8 клетках вокруг.', f:'oops'},
@@ -662,15 +725,38 @@ const JOKES = [
 ];
 const SHOUTS = ['Эй!', 'Я СПАЛ!', 'Ну ты чего?!', 'Топотун!', 'Ботинки сними!', 'Ещё 5 минуточек…', 'Ай-ай-ай!', 'Хам!', 'Чего пихаешься?!', 'Я всё маме расскажу!', 'Ну всё, я обиделся', 'Кто здесь?!'];
 const ABIL = [
-  {key:'light', need:3, cd:60, name:'Свет', spr:'light',
+  {key:'light', need:3, cd:30, name:'Свет', spr:'light',
     page:'Научился видеть, куда падает солнце. Там пусто.',
-    desc:'Свет: подсвечивает безопасную клетку. Раз в минуту.'},
-  {key:'sense', need:6, cd:120, name:'Чутьё', spr:'eye',
+    desc:'Свет: подсвечивает безопасную клетку. Раз в 30 секунд.'},
+  {key:'sense', need:6, cd:40, name:'Чутьё', spr:'eye',
     page:'Слышу, как сопят слаймы. Могу посчитать.',
-    desc:'Чутьё: считает слаймов в строке. Раз в 2 минуты.'},
-  {key:'life', need:9, name:'Вторая жизнь', spr:'life',
-    page:'Научился падать мягко.',
-    desc:'Вторая жизнь: первый слайм на поле не отнимает сердце.'},
+    desc:'Чутьё: считает слаймов в строке. Раз в 40 секунд.'},
+  {key:'life', need:9, cd:300, dur:15, name:'Вторая жизнь', spr:'life',
+    page:'Научился падать мягко. И золотить сердце.',
+    desc:'Вторая жизнь: на 15 секунд одно сердце становится золотым. Проиграл битву — сгорает золото, а не сердце. Раз в 5 минут.'},
+  {key:'satan', need:15, cd:180, dur:3, name:'Satanic', spr:'devil',
+    page:'Пятнадцать страниц. Теперь слаймы меня боятся. Немного. Секунды три.',
+    desc:'Satanic: 3 секунды неуязвимости — наступай куда угодно, слаймы просто показываются. Раз в 3 минуты.'},
+];
+const TAUNTS = [
+  'Ха! Ножик тупой или руки?',
+  'Сапёр, говоришь? Скорее сапог.',
+  'Запиши в дневник: «меня победило желе».',
+  'Даже кот резал бы лучше. Он, кстати, смотрел.',
+  'Иди потренируйся на тыквах. Они хотя бы не падают.',
+  'Ты так уверенно резал воздух. Воздух доволен.',
+  'Мы мягкие. Мы липкие. И мы тебя сделали.',
+  'Я бы сказал «попробуй ещё», но не хочу врать.',
+  'Это было мило. Жалко, что бесполезно.',
+  'Приходи ещё. Нам нравится смеяться.',
+  'Твои ботинки мы оставим себе. На память.',
+  'Сердечко минус один. Хи-хи. Буль.',
+];
+const BWINS = [
+  'Слайм уполз зализывать раны.',
+  'Слаймы расползлись по кустам. Сердце цело.',
+  'Кот перестал танцевать и похлопал.',
+  'Слаймы запомнят этот день. И твой клинок.',
 ];
 const WINS = [
   'Поле чистое. Староста дал пирожок с тыквой.',
@@ -687,6 +773,7 @@ const KEY = 'sapper-diary-v1';
 const defSave = () => ({pages:[], mistakes:0, unlocked:1, done:[false,false,false], best:[null,null,null], day:0, muted:false, music:true, track:0, trackId:null, finished:false, seenHelp:false});
 let save = defSave();
 try { const raw = localStorage.getItem(KEY); if (raw) save = Object.assign(defSave(), JSON.parse(raw)); } catch (e) {}
+if (!save.v2) { save.best = [save.best[0] || null, null, null]; save.v2 = true; } // рекорды старых 16×16 и 32×32 больше не подходят
 const cloud = tg && tgv('6.9') && tg.CloudStorage ? tg.CloudStorage : null;
 const pack = s => JSON.stringify(Object.assign({}, s, {pages: s.pages.map(p => [p.k, p.i, p.d, p.lv == null ? -1 : p.lv].join('.'))}));
 const unpack = o => { o.pages = (o.pages || []).map(p => typeof p === 'string' ? (a => ({k:a[0], i:+a[1], d:+a[2], lv:+a[3]}))(p.split('.')) : p); return o; };
@@ -750,6 +837,14 @@ const sfx = {
   light: () => { [660, 880, 1320].forEach((f, i) => tone(f, f, .1, 'triangle', .05, i * .07)); },
   win: () => { [523, 659, 784, 1046, 784, 1046].forEach((f, i) => tone(f, f, .15, 'square', .05, i * .11)); },
   lose: () => { [392, 330, 262].forEach((f, i) => tone(f, f * .97, .2, 'triangle', .06, i * .16)); },
+  slice: () => { tone(1800, 500, .09, 'sawtooth', .025); tone(260, 120, .12, 'square', .035, .02); },
+  bomb: () => { tone(220, 40, .5, 'sawtooth', .08); tone(90, 30, .6, 'square', .06, .03); },
+  combo: n => { [784, 988, 1175, 1568].slice(0, Math.min(4, n - 1)).forEach((f, i) => tone(f, f, .08, 'square', .04, i * .06)); },
+  blip: () => tone(520, 520, .025, 'square', .016),
+  gold: () => { [784, 1046, 1318, 1568].forEach((f, i) => tone(f, f * 1.01, .14, 'triangle', .05, i * .08)); },
+  satan: () => { tone(130, 55, .6, 'sawtooth', .07); tone(65, 40, .7, 'square', .05, .05); tone(392, 196, .35, 'square', .03, .1); },
+  bwin: () => { [523, 659, 784, 1046].forEach((f, i) => tone(f, f, .12, 'square', .05, i * .09)); tone(1046, 1046, .4, 'square', .04, .4); },
+  blose: () => { [440, 415, 392, 330].forEach((f, i) => tone(f, f * .98, .18, 'square', .05, i * .17)); },
 };
 
 /* =====================================================
@@ -974,34 +1069,106 @@ fxResize(); requestAnimationFrame(fxLoop);
 const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
 const TRACKS = [
-  {name:'Неоновый листопад', style:'чиптюн · дрим', bpm:92, gain:.5,
+  {name:'Неоновый листопад', style:'дрим-поп · чиптюн', bpm:92, gain:.5,
     chords:[[57,60,64],[53,57,60],[55,60,64],[55,59,62]], roots:[45,41,48,43],
     pad:{type:'sawtooth', cutoff:1100, vol:.03, att:.6, rel:1.4, det:10, r:.6}, hits:[[0,16]],
     bass:{type:'triangle', vol:.17, hits:[[0,0,6],[8,0,2],[10,12,2],[14,0,2]]},
     arp:{type:'square', vol:.024, every:1, len:.11, oct:12, cutoff:2600, d:.38, r:.3, pat:[0,2,4,5,3,1,2,4,0,2,4,5,4,3,2,1]},
-    lead:{type:'triangle', vol:.05, d:.35, r:.35, alt:true, notes:[[0,76,3],[4,72,2],[6,74,2],[8,76,6],[16,77,3],[20,76,2],[22,72,2],[24,69,6],[32,72,3],[36,74,2],[38,76,2],[40,79,6],[48,74,3],[52,72,2],[54,71,2],[56,74,6]]},
-    drums:{intro:true, k:[0,10], s:[8], h:[2,6,10,14], kv:.5, sv:.12, hv:.028, sr:.5}},
+    lead:{type:'triangle', vol:.05, d:.35, r:.35, notes:[[0,76,3],[4,72,2],[6,74,2],[8,76,6],[16,77,3],[20,76,2],[22,72,2],[24,69,6],[32,72,3],[36,74,2],[38,76,2],[40,79,6],[48,74,3],[52,72,2],[54,71,2],[56,74,6]]},
+    drums:{k:[0,10], s:[8], h:[2,6,10,14], kv:.5, sv:.12, hv:.028, sr:.5},
+    form:['i','A','A','B','B','C','A','B','o'],
+    parts:{
+      i:{lead:0, drums:'hat', bass:0},
+      A:{drums:'half'},
+      B:{chords:[[53,57,60],[55,59,62],[52,55,59],[57,60,64]], roots:[41,43,40,45], fill:1,
+        notes:[[0,77,4],[4,76,2],[6,74,2],[8,72,4],[12,74,4],[16,79,4],[20,77,2],[22,76,2],[24,74,8],[32,76,4],[36,74,2],[38,72,2],[40,71,4],[44,72,4],[48,76,6],[54,74,2],[56,72,8]]},
+      C:{chords:[[50,53,57],[57,60,64],[48,52,55],[55,59,62]], roots:[38,45,36,43], arp:0, drums:'hat',
+        notes:[[0,69,8],[8,72,8],[16,74,8],[24,76,8],[32,77,8],[40,76,8],[48,74,16]]},
+      o:{lead:0, drums:0, arp:0}}},
   {name:'Слаймы спят', style:'лоу-фай · чилл', bpm:76, gain:.33, swing:.14, vinyl:true,
     chords:[[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]], roots:[41,40,38,36],
     pad:{type:'triangle', cutoff:1900, vol:.03, att:.02, rel:.7, det:6, r:.35}, hits:[[0,7],[10,5]],
     bass:{type:'sine', vol:.26, hits:[[0,0,6],[7,7,2],[10,0,4]]},
-    lead:{type:'triangle', vol:.042, d:.3, r:.3, alt:true, notes:[[2,72,2],[4,74,2],[6,76,4],[20,74,2],[22,72,2],[24,71,6],[34,69,2],[36,72,2],[38,74,6],[52,72,2],[54,71,2],[56,67,6]]},
-    drums:{intro:true, k:[0,7,10], s:[4,12], h:[0,2,4,6,8,10,12,14], kv:.4, sv:.09, hv:.02, sr:.25, scut:1500}},
-  {name:'Ночь у башни', style:'эмбиент · синтвейв', bpm:80, gain:.32,
+    lead:{type:'triangle', vol:.042, d:.3, r:.3, notes:[[2,72,2],[4,74,2],[6,76,4],[20,74,2],[22,72,2],[24,71,6],[34,69,2],[36,72,2],[38,74,6],[52,72,2],[54,71,2],[56,67,6]]},
+    drums:{k:[0,7,10], s:[4,12], h:[0,2,4,6,8,10,12,14], kv:.4, sv:.09, hv:.02, sr:.25, scut:1500},
+    form:['i','A','A','B','C','A','B','o'],
+    parts:{
+      i:{lead:0, drums:0, bass:0},
+      A:{},
+      B:{chords:[[46,50,53,57],[45,48,52,55],[43,46,50,53],[48,52,55,58]], roots:[34,33,31,36],
+        notes:[[0,74,3],[4,72,2],[6,69,2],[8,70,6],[16,72,3],[20,69,2],[22,67,2],[24,69,6],[32,67,3],[36,70,2],[38,74,2],[40,72,6],[48,70,2],[50,69,2],[52,67,2],[54,64,10]]},
+      C:{lead:0, drums:'half'},
+      o:{lead:0, drums:0}}},
+  {name:'Ночь у башни', style:'тёмный синтвейв', bpm:80, gain:.32,
     chords:[[50,53,57],[50,53,58],[48,53,57],[48,52,55]], roots:[38,34,41,36],
     pad:{type:'sawtooth', cutoff:750, vol:.04, att:1.4, rel:2.2, det:14, r:.75}, hits:[[0,16]],
     bass:{type:'sine', vol:.22, hits:[[0,0,12],[12,0,4]]},
     arp:{type:'triangle', vol:.045, every:2, len:.35, oct:12, d:.5, r:.55, pat:[0,1,2,3,4,3,2,1]},
-    drums:{intro:true, k:[0,8], s:[], h:[4,12], kv:.32, sv:0, hv:.016}},
-  {name:'Утро в деревне', style:'чиптюн · уютно', bpm:104, gain:.55,
+    lead:{type:'sawtooth', vol:.026, cutoff:1500, d:.45, r:.6, notes:[[0,74,6],[6,72,2],[8,69,8],[16,70,6],[22,69,2],[24,65,8],[32,69,6],[38,67,2],[40,65,8],[48,64,4],[52,65,4],[56,67,8]]},
+    drums:{k:[0,8], s:[4,12], h:[4,12], kv:.32, sv:.07, hv:.016, sr:.6},
+    form:['i','A','A','B','B','C','A','B','o'],
+    parts:{
+      i:{arp:0, bass:0, drums:0, lead:0},
+      A:{drums:'half', lead:0},
+      B:{fill:1},
+      C:{chords:[[55,58,62],[53,57,60],[51,55,58],[50,54,57]], roots:[43,41,39,38], drums:0,
+        notes:[[0,74,16],[16,72,16],[32,70,16],[48,69,16]]},
+      o:{arp:0, drums:0, lead:0}}},
+  {name:'Утро в деревне', style:'бодрый чиптюн', bpm:104, gain:.55,
     chords:[[60,64,67],[57,60,64],[57,60,65],[55,59,62]], roots:[48,45,41,43],
     pad:{type:'triangle', cutoff:1500, vol:.02, att:.05, rel:.5, det:4, r:.3}, hits:[[0,16]],
     bass:{type:'triangle', vol:.17, hits:[[0,0,3],[4,12,2],[8,0,3],[12,7,2]]},
     arp:{type:'square', vol:.016, every:1, len:.07, oct:12, cutoff:3500, d:.2, r:.2, pat:[0,1,2,1]},
     lead:{type:'square', vol:.028, cutoff:2400, d:.25, r:.25, notes:[[0,72,2],[2,76,2],[4,79,4],[8,76,2],[10,74,2],[12,72,4],[16,72,2],[18,76,2],[20,76,4],[24,74,4],[28,72,4],[32,69,2],[34,72,2],[36,77,4],[40,76,4],[44,74,4],[48,74,2],[50,71,2],[52,67,4],[56,71,2],[58,74,6]]},
-    drums:{k:[0,8], s:[4,12], h:[0,2,4,6,8,10,12,14], kv:.42, sv:.08, hv:.02, sr:.3}},
+    drums:{k:[0,8], s:[4,12], h:[0,2,4,6,8,10,12,14], kv:.42, sv:.08, hv:.02, sr:.3},
+    form:['i','A','A','B','B','C','A','B','o'],
+    parts:{
+      i:{lead:0, drums:'hat', pad:0},
+      A:{},
+      B:{chords:[[53,57,60],[55,59,62],[52,55,59],[57,60,64]], roots:[41,43,40,45], fill:1,
+        notes:[[0,77,2],[2,76,2],[4,77,2],[6,79,2],[8,81,4],[12,79,4],[16,79,2],[18,77,2],[20,79,2],[22,81,2],[24,83,4],[28,79,4],[32,76,2],[34,74,2],[36,76,2],[38,79,2],[40,79,4],[44,76,4],[48,76,2],[50,77,2],[52,76,2],[54,74,2],[56,72,8]]},
+      C:{chords:[[50,53,57],[55,59,62],[52,55,60],[52,55,60]], roots:[38,43,36,36], lead:0, drums:'half'},
+      o:{lead:0, drums:0}}},
+  {name:'Тыквенный фанк', style:'фанк · 8-бит', bpm:112, gain:.45,
+    chords:[[52,55,59,62],[57,61,64],[55,59,62],[57,61,64]], roots:[40,45,43,45],
+    pad:{type:'square', cutoff:1700, vol:.016, att:.005, rel:.12, det:5, r:.15}, hits:[[0,2],[3,1],[6,2],[10,1],[12,2]],
+    bass:{type:'square', vol:.11, hits:[[0,0,2],[3,12,1],[4,0,1],[6,10,2],[8,0,1],[10,12,1],[11,7,1],[14,10,2]]},
+    lead:{type:'square', vol:.026, cutoff:2600, d:.25, r:.2, notes:[[0,71,2],[2,74,2],[4,76,3],[8,74,1],[9,76,1],[10,79,4],[16,81,2],[18,79,2],[20,76,4],[24,74,2],[26,76,6],[32,71,2],[34,74,2],[36,76,3],[40,79,2],[42,81,2],[44,83,4],[48,81,2],[50,79,2],[52,76,2],[54,74,2],[56,76,8]]},
+    drums:{k:[0,6,10], s:[4,12], h:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], kv:.5, sv:.12, hv:.014, sr:.2},
+    form:['i','A','B','B','C','A','B','o'],
+    parts:{
+      i:{pad:0, lead:0, drums:'half'},
+      A:{lead:0},
+      B:{fill:1},
+      C:{chords:[[48,52,55,59],[47,50,54,57],[45,48,52,55],[47,51,54,57]], roots:[36,35,33,35], drums:'half',
+        notes:[[0,79,6],[8,78,6],[16,76,6],[24,74,6],[32,72,8],[40,71,8],[48,75,8],[56,71,8]]},
+      o:{lead:0, bass:0, drums:'hat'}}},
+  {name:'Дождь над полем', style:'эмбиент · пиано', bpm:68, gain:.4, vinyl:true,
+    chords:[[55,59,62,66],[52,55,59,62],[48,52,55,59],[50,54,57]], roots:[43,40,36,38],
+    pad:{type:'triangle', cutoff:1200, vol:.025, att:.8, rel:1.6, det:6, r:.6}, hits:[[0,16]],
+    bass:{type:'sine', vol:.2, hits:[[0,0,8],[8,7,8]]},
+    arp:{type:'triangle', vol:.04, every:2, len:.5, oct:12, cutoff:2400, d:.4, r:.5, pat:[0,2,1,3,2,4,3,1]},
+    lead:{type:'sine', vol:.05, d:.4, r:.5, notes:[[0,74,4],[4,71,4],[8,74,8],[16,76,4],[20,74,4],[24,71,8],[32,72,4],[36,71,4],[40,67,8],[48,69,4],[52,71,4],[56,74,8]]},
+    drums:{k:[0,10], s:[8], h:[4,12], kv:.3, sv:.05, hv:.012, sr:.6, scut:1200},
+    form:['i','A','A','B','A','B','o'],
+    parts:{
+      i:{lead:0, drums:0, bass:0},
+      A:{drums:'half'},
+      B:{chords:[[52,55,59,62],[48,52,55,59],[55,59,62],[50,54,57]], roots:[40,36,43,38],
+        notes:[[0,79,6],[6,78,2],[8,76,8],[16,79,4],[20,81,4],[24,83,8],[32,79,8],[40,76,8],[48,78,4],[52,76,4],[56,74,8]]},
+      o:{lead:0, drums:0, arp:0}}},
 ];
-const loopsOf = tr => Math.max(4, Math.round(150 / (16 * 60 / tr.bpm)));
+// боевая тема для мини-игры (своя, в духе 8-битных RPG)
+const BATTLE = {name:'Битва', bpm:150, gain:.52,
+  chords:[[62,65,69],[58,62,65],[60,64,67],[57,61,64]], roots:[38,34,36,33],
+  pad:{type:'square', cutoff:1400, vol:.014, att:.01, rel:.1, det:4, r:.1}, hits:[[0,3],[6,2],[12,3]],
+  bass:{type:'square', vol:.12, hits:[[0,0,1],[2,12,1],[4,0,1],[6,12,1],[8,0,1],[10,12,1],[12,0,1],[14,12,1]]},
+  arp:{type:'square', vol:.012, every:1, len:.05, oct:12, cutoff:3200, pat:[0,1,2,1]},
+  lead:{type:'square', vol:.04, cutoff:3200, d:.2, r:.15, notes:[[0,74,3],[3,77,3],[6,81,2],[8,79,2],[10,77,2],[12,76,2],[14,77,2],[16,74,3],[19,77,3],[22,82,2],[24,81,2],[26,79,2],[28,77,4],[32,76,3],[35,79,3],[38,84,2],[40,82,2],[42,81,2],[44,79,2],[46,76,2],[48,73,4],[52,76,4],[56,79,4],[60,81,4]]},
+  drums:{k:[0,4,8,12], s:[4,12], h:[2,6,10,14], kv:.5, sv:.13, hv:.022, sr:.15},
+  form:['A','B'],
+  parts:{A:{}, B:{fill:1, notes:[[0,81,2],[2,79,2],[4,77,2],[6,74,2],[8,77,4],[12,81,4],[16,82,2],[18,81,2],[20,79,2],[22,77,2],[24,74,8],[32,84,2],[34,82,2],[36,81,2],[38,79,2],[40,76,4],[44,79,4],[48,81,4],[52,79,2],[54,77,2],[56,76,4],[60,73,4]]}}};
+const loopsOf = tr => tr.form ? tr.form.length : Math.max(4, Math.round(150 / (16 * 60 / tr.bpm)));
 function makeEngine(ac, out) {
   const nbuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
   { const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
@@ -1070,26 +1237,31 @@ function makeEngine(ac, out) {
     const g = ac.createGain(); g.gain.value = .006; s.connect(f); f.connect(g); g.connect(dry); s.start(); vin = s;
   }
   function setBpm(bpm) { dly.delayTime.setValueAtTime(60 / bpm * .75, ac.currentTime); }
+  function sting(t) { // позывной «Слайм FM» перед каждой песней
+    const p = {type:'square', vol:.035, cutoff:3200, d:.3, r:.35};
+    [[72, 0], [76, .09], [79, .18], [84, .27]].forEach(([m, dt], k) => tone(t + dt, m, k === 3 ? .45 : .1, p));
+  }
   function schedule(tr, step, t, loop) {
+    const P = tr.form ? (tr.parts[tr.form[loop % tr.form.length]] || {}) : {};
     const bar = step >> 4, s = step & 15, sd = 60 / tr.bpm / 4;
-    const ch = tr.chords[bar], root = tr.roots[bar];
-    if (tr.pad) tr.hits.forEach(([hs, len]) => { if (s === hs) pad(t, ch, len * sd, tr.pad); });
-    if (tr.bass) tr.bass.hits.forEach(([hs, off, len]) => { if (s === hs) bass(t, root + off, len * sd, tr.bass); });
+    const ch = (P.chords || tr.chords)[bar], root = (P.roots || tr.roots)[bar];
+    if (tr.pad && P.pad !== 0) tr.hits.forEach(([hs, len]) => { if (s === hs) pad(t, ch, len * sd, tr.pad); });
+    if (tr.bass && P.bass !== 0) tr.bass.hits.forEach(([hs, off, len]) => { if (s === hs) bass(t, root + off, len * sd, tr.bass); });
     const A = tr.arp;
-    if (A && s % A.every === 0) { const tones = ch.concat(ch.map(n => n + 12)); tone(t, tones[A.pat[(s / A.every) % A.pat.length] % tones.length] + A.oct, A.len, A); }
-    const Ld = tr.lead;
-    if (Ld && (!Ld.alt || loop % 2 === 1)) for (const [ns, m, len] of Ld.notes) if (ns === step) tone(t, m, len * sd, Ld);
+    if (A && P.arp !== 0 && s % A.every === 0) { const tones = ch.concat(ch.map(n => n + 12)); tone(t, tones[A.pat[(s / A.every) % A.pat.length] % tones.length] + A.oct, A.len, A); }
+    const Ld = tr.lead, notes = P.notes || (Ld && Ld.notes);
+    if (Ld && notes && P.lead !== 0 && (tr.form || !Ld.alt || loop % 2 === 1)) for (const [ns, m, len] of notes) if (ns === step) tone(t, m, len * sd, Ld);
     const D = tr.drums;
     if (D) {
-      if (loop > 0 || !D.intro) {
-        if (D.k.includes(s)) kick(t, D.kv);
-        if (D.s.includes(s)) noise(t, .18, 'bandpass', D.scut || 1800, .7, D.sv, D.sr || .3);
-      }
-      if (D.h.includes(s)) noise(t, .04, 'highpass', 7500, .5, D.hv * (s % 4 === 2 ? 1.4 : 1), 0);
+      const mode = tr.form ? (P.drums == null ? 'full' : P.drums) : (loop > 0 || !D.intro ? 'full' : 'hat');
+      if ((mode === 'full' || mode === 'half') && D.k.includes(s)) kick(t, D.kv);
+      if (mode === 'full' && D.s.includes(s)) noise(t, .18, 'bandpass', D.scut || 1800, .7, D.sv, D.sr || .3);
+      if (mode && D.h.includes(s)) noise(t, .04, 'highpass', 7500, .5, D.hv * (s % 4 === 2 ? 1.4 : 1), 0);
+      if (P.fill && mode && bar === 3 && s >= 12) noise(t, .12, 'bandpass', (D.scut || 1800) + (s - 12) * 300, .7, (D.sv || .1) * (.6 + (s - 12) * .2), D.sr || .3);
     }
     if (tr.vinyl && Math.random() < .18) noise(t + Math.random() * sd, .006, 'highpass', 2500, .5, .05, 0);
   }
-  return {schedule, setBpm, vinyl};
+  return {schedule, setBpm, vinyl, sting};
 }
 // свои треки хранятся только на этом устройстве (IndexedDB), в интернет не уходят
 const TrackDB = (() => {
@@ -1115,7 +1287,7 @@ const TrackDB = (() => {
 })();
 const Music = (() => {
   TRACKS.forEach((t, i) => { t.id = 'b' + i; });
-  let ac = null, eng = null, out = null, timer = null, step = 0, nextT = 0, loop = 0, audio = null;
+  let ac = null, eng = null, out = null, timer = null, step = 0, nextT = 0, loop = 0, audio = null, override = null, gapT = null, resumeT = null;
   let playing = false, curId = TRACKS[0].id;
   const custom = [];
   try { localStorage.removeItem('sapper-yt'); localStorage.removeItem('sapper-tvpos'); } catch (e) {}
@@ -1131,15 +1303,21 @@ const Music = (() => {
     } catch (e) { ac = null; return false; }
   }
   function tick() {
-    const tr = cur(); if (!tr || tr.url || !ac) return;
+    const tr = override || cur(); if (!tr || tr.url || !ac) return;
     if (nextT < ac.currentTime - .3) nextT = ac.currentTime + .05;
     while (nextT < ac.currentTime + .2) {
       eng.schedule(tr, step, nextT, loop);
       const sd = 60 / tr.bpm / 4;
       nextT += tr.swing ? sd * (step % 2 ? 1 - tr.swing : 1 + tr.swing) : sd;
       step = (step + 1) % 64;
-      if (step === 0 && ++loop >= loopsOf(tr)) { // после трека радио — следующий трек радио
-        curId = TRACKS[(TRACKS.indexOf(tr) + 1) % TRACKS.length].id; startCur(); return;
+      if (step !== 0) continue;
+      loop++;
+      if (!override && loop >= loopsOf(tr)) { // песня кончилась: пауза, затем позывной и следующая
+        clearInterval(timer); timer = null;
+        const nid = TRACKS[(TRACKS.indexOf(tr) + 1) % TRACKS.length].id;
+        clearTimeout(gapT);
+        gapT = setTimeout(() => { gapT = null; if (playing && !override && curId === tr.id) { curId = nid; startCur(); } }, 2200);
+        return;
       }
     }
   }
@@ -1149,6 +1327,7 @@ const Music = (() => {
   function loadPos(id) { try { const o = JSON.parse(localStorage.getItem(POS_KEY) || 'null'); return o && o.id === id ? +o.pos || 0 : 0; } catch (e) { return 0; } }
   function halt() {
     clearInterval(timer); timer = null;
+    clearTimeout(gapT); gapT = null; clearTimeout(resumeT); resumeT = null;
     if (audio) { const t = cur(); if (t && t.url) savePos(t.id, audio.currentTime); audio.pause(); audio = null; }
     if (eng) eng.vinyl(false);
     if (ac) { out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(0, ac.currentTime, .1); }
@@ -1168,12 +1347,15 @@ const Music = (() => {
       let lastSave = 0;
       audio.ontimeupdate = () => { const now = Date.now(); if (now - lastSave > 4000) { lastSave = now; savePos(tr.id, audio.currentTime); } };
       audio.play().catch(() => {});
+      if (playing) toast('♪ ' + tr.name, 2600);
     } else {
       if (!ensure()) { playing = false; toast('Музыка не поддерживается на этом устройстве'); radioUI(); return; }
       try { ac.resume(); } catch (e) {}
-      eng.setBpm(tr.bpm); step = 0; loop = 0; nextT = ac.currentTime + .06;
-      out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(tr.gain || .5, ac.currentTime, .4);
+      eng.setBpm(tr.bpm); step = 0; loop = 0; nextT = ac.currentTime + .8;
+      out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(tr.gain || .5, ac.currentTime, .15);
+      eng.sting(ac.currentTime + .08);
       eng.vinyl(!!tr.vinyl); timer = setInterval(tick, 25); tick();
+      toast('♪ Слайм FM: ' + tr.name, 2600);
     }
     radioUI();
   }
@@ -1220,12 +1402,31 @@ const Music = (() => {
       radioUI();
     }).catch(() => {});
   }
-  function unlock() { if (ac && playing && ac.state !== 'running' ) { try { ac.resume(); } catch (e) {} } }
+  function unlock() { if (ac && (playing || override) && ac.state !== 'running' ) { try { ac.resume(); } catch (e) {} } }
+  // боевая музыка: радио замолкает, после битвы возвращается
+  function battle(on) {
+    if (on) {
+      if (save.muted) return;
+      halt();
+      if (!ensure()) return;
+      try { ac.resume(); } catch (e) {}
+      override = BATTLE; eng.vinyl(false); eng.setBpm(BATTLE.bpm);
+      step = 0; loop = 0; nextT = ac.currentTime + .08;
+      out.gain.cancelScheduledValues(ac.currentTime); out.gain.setValueAtTime(0, ac.currentTime);
+      out.gain.linearRampToValueAtTime(BATTLE.gain, ac.currentTime + .15);
+      timer = setInterval(tick, 25); tick();
+    } else {
+      if (!override) return;
+      override = null; clearInterval(timer); timer = null;
+      out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(0, ac.currentTime, .12);
+      if (playing) resumeT = setTimeout(() => { resumeT = null; if (playing && !override) startCur(); }, 1800);
+    }
+  }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { if (ac) try { ac.suspend(); } catch (e) {} if (audio) audio.pause(); }
-    else if (playing) { if (ac) try { ac.resume(); } catch (e) {} if (audio) audio.play().catch(() => {}); }
+    else if (playing || override) { if (ac) try { ac.resume(); } catch (e) {} if (audio) audio.play().catch(() => {}); }
   });
-  return {play, stop, go, pick, addFiles, remove, loadSaved, unlock, cur, list, toggle: () => (playing ? stop() : play()),
+  return {play, stop, go, pick, addFiles, remove, loadSaved, unlock, cur, list, battle, toggle: () => (playing ? stop() : play()),
     get playing() { return playing; }, get idx() { return curIndex(); }, get pos() { return audio ? audio.currentTime : -1; }};
 })();
 function radioHTML(big) {
@@ -1304,7 +1505,7 @@ function show(id) {
   if (tg && tg.BackButton && tgv('6.1')) { try { id === 'menu' ? tg.BackButton.hide() : tg.BackButton.show(); } catch (e) {} }
 }
 function goBack() {
-  if (modalOpen) return;
+  if (modalOpen || Battle.st) return;
   if (screen === 'diary') { if (diaryFrom === 'game') { show('game'); setTheme(L.theme); updateHorizon(); } else openMenu(); }
   else if (screen === 'game') openMenu();
 }
@@ -1383,7 +1584,8 @@ function openMenu() {
   setTheme('morning'); show('menu');
   setScene('morning', innerHeight * .8, 0, .12);
   const name = tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name;
-  $('#hello').innerHTML = (name ? `Привет, ${esc(name)}!<br>` : '') + 'Пиксельный сапёр про ошибки.<br><b>Ошибка — это страница в дневнике.</b>';
+  const nm = String(name || '').replace(/[\u0000-\u001F\u007F-\u009F\u00AD\u200B-\u200F\u2028-\u202F\u2060-\u206F\u3164\uFE00-\uFE0F\uFEFF\u115F\u1160]/g, '').trim();
+  $('#hello').innerHTML = (nm ? `Привет, ${esc(nm)}!<br>` : (inTg ? 'Привет!<br>' : '')) + 'Пиксельный сапёр про ошибки.<br><b>Ошибка — это страница в дневнике.</b>';
   $('#btnDiary').textContent = `Дневник · ${save.pages.length} стр.`;
   setSndIcon();
   const box = $('#levels'); box.innerHTML = '';
@@ -1413,8 +1615,9 @@ function showHelp() {
       <li><b>Цифра</b> — сколько слаймов спит в 8 клетках вокруг.</li>
       <li><b>Флажок</b>: долгое нажатие, правая кнопка мыши или режим «Флажок».</li>
       <li>Нажми на цифру, вокруг которой стоят все флажки, — соседи откроются сами.</li>
-      <li>У Рина <b>3 сердца</b>. Наступил на слайма — минус сердце, плюс страница в дневнике.</li>
-      <li>Каждые <b>3 страницы</b> — новая способность: Свет, Чутьё, Вторая жизнь.</li>
+      <li>Наступил на слайма — <b>битва</b>! С неба падают слаймы: режь их пальцем или мышью. Порезал 80% — сердце цело. Красных не трогай: минус 2 секунды.</li>
+      <li>У Рина <b>3 сердца</b>. Проиграл битву — минус сердце. Каждая ошибка — страница в дневнике.</li>
+      <li>Страницы открывают способности: <b>3</b> — Свет, <b>6</b> — Чутьё, <b>9</b> — Вторая жизнь, <b>15</b> — Satanic.</li>
       <li>Сердца кончились — новое поле. Дневник и способности остаются.</li>
       <li>Большие поля можно <b>приближать двумя пальцами</b>.</li>
       <li>Кот в углу — это радио: треки игры или свой mp3. Там же музыку можно выключить.</li>
@@ -1425,9 +1628,9 @@ function showHelp() {
    ИГРА
    ===================================================== */
 const game = {active:false};
-let L, W, H, N, cells = [], els = [], started = false, hearts = 3, lifeReady = false, over = false;
+let L, W, H, N, cells = [], els = [], started = false, hearts = 3, goldUntil = 0, satanUntil = 0, over = false;
 let mode = 'dig', sensing = false, cs = 40, fieldT0 = 0, fieldErrs = 0, rinBase = 'calm', rinT;
-const cd = {light:0, sense:0};
+const cd = {light:0, sense:0, life:0, satan:0};
 const board = $('#board'), wrap = $('#boardwrap');
 const nb = i => { const x = i % W, y = (i / W) | 0, r = [];
   for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
@@ -1446,7 +1649,7 @@ function startLevel(id) {
   cells = Array.from({length: W * H}, () => ({s:false, n:0, o:false, f:false, b:false, lit:false, sl:false}));
   started = false; hearts = 3; over = false; sensing = false; fieldErrs = 0; setMode('dig');
   document.body.classList.remove('sensing');
-  lifeReady = save.mistakes >= 9;
+  goldUntil = 0; satanUntil = 0;
   save.day++; persist();
   setTheme(L.theme); show('game');
   $('#lvName').textContent = L.name;
@@ -1528,29 +1731,34 @@ function draw(i, anim) {
   el.textContent = c.o && !c.b && c.n ? c.n : '';
 }
 function updateHud() {
-  const hs = $('#hearts').children;
-  for (let k = 0; k < 3; k++) hs[k].classList.toggle('empty', k >= hearts);
+  const hs = $('#hearts').children, gold = goldUntil > Date.now();
+  for (let k = 0; k < 3; k++) { hs[k].classList.toggle('empty', k >= hearts); hs[k].classList.toggle('gold', gold && k === hearts - 1); }
   $('#pagesN').textContent = save.mistakes;
-  const known = cells.filter(c => c.f || c.b).length;
+  const known = cells.filter(c => c.f || c.b || c.sl).length;
   $('#slimesN').textContent = Math.max(0, N - known);
-  $('#lifeStat').style.display = save.mistakes >= 9 ? 'flex' : 'none';
-  $('#lifeIco').classList.toggle('used', !lifeReady);
+  document.body.classList.toggle('satanic', game.active && satanUntil > Date.now());
+}
+// пока горит золотое сердце или Satanic, остальные способности недоступны
+function blocker(self) {
+  const now = Date.now();
+  if (self !== 'life' && goldUntil > now) return 'Вторая жизнь';
+  if (self !== 'satan' && satanUntil > now) return 'Satanic';
+  return null;
 }
 function updateAbil() {
   const now = Date.now();
   const set = (el, cls, txt) => { el.className = 'ab ' + cls; el.querySelector('.as').textContent = txt; };
-  [['light', $('#abLight'), 0], ['sense', $('#abSense'), 1]].forEach(([k, el, ai]) => {
-    const a = ABIL[ai];
+  [['light', '#abLight', 0], ['sense', '#abSense', 1], ['life', '#abLife', 2], ['satan', '#abSatan', 3]].forEach(([k, sel, ai]) => {
+    const a = ABIL[ai], el = $(sel), on = k === 'life' ? goldUntil : k === 'satan' ? satanUntil : 0;
     if (save.mistakes < a.need) set(el, 'locked', `${save.mistakes}/${a.need} стр.`);
+    else if (on > now) set(el, 'active', 'ещё ' + Math.ceil((on - now) / 1000) + ' с');
     else if (cd[k] > now) set(el, 'cool', fmtTime(cd[k] - now));
+    else if (blocker(k)) set(el, 'blocked', 'недоступно');
     else if (k === 'sense' && sensing) set(el, 'armed', 'выбери клетку');
     else set(el, 'ready', 'готово');
   });
-  const le = $('#abLife');
-  if (save.mistakes < 9) set(le, 'passive locked', `${save.mistakes}/9 стр.`);
-  else set(le, 'passive ' + (lifeReady ? 'ready' : 'cool'), lifeReady ? 'есть' : 'потрачена');
 }
-setInterval(() => { if (game.active) updateAbil(); }, 500);
+setInterval(() => { if (game.active) { updateAbil(); updateHud(); } }, 500);
 
 function plant(safe) {
   const ban = new Set([safe, ...nb(safe)]);
@@ -1577,11 +1785,21 @@ function flood(i) {
   }
   return count;
 }
+const satanOn = () => satanUntil > Date.now();
+// Satanic: слайм не просыпается, просто показывается
+function hitSlime(i) {
+  if (!satanOn()) { stepSlime(i); return; }
+  const c = cells[i]; c.sl = true; c.lit = false; draw(i);
+  const r = els[i].getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2, 10, ['#E0565B', '#FFE27A', '#A8323A'], 3, .1);
+  bubble(els[i], 'Хр-р… не заметил');
+  sfx.flag(); haptic('light'); updateHud();
+}
 function openCell(i) {
   const c = cells[i];
-  if (c.o || c.f || over) return;
+  if (c.o || c.f || c.sl || over) return;
   if (!started) plant(i);
-  if (c.s) { stepSlime(i); return; }
+  if (c.s) { hitSlime(i); return; }
   const n = flood(i);
   if (n > 6) sfx.sweep(); else sfx.dig();
   haptic('light');
@@ -1590,14 +1808,16 @@ function openCell(i) {
 function chord(i) {
   const c = cells[i];
   if (!c.o || c.b || !c.n) return;
-  const around = nb(i), marked = around.filter(j => cells[j].f || cells[j].b).length;
+  const around = nb(i), marked = around.filter(j => cells[j].f || cells[j].b || cells[j].sl).length;
   if (marked !== c.n) { haptic('soft'); return; }
-  const targets = around.filter(j => !cells[j].o && !cells[j].f);
+  const targets = around.filter(j => !cells[j].o && !cells[j].f && !cells[j].sl);
   if (!targets.length) return;
-  const slime = targets.find(j => cells[j].s);
+  const slimes = targets.filter(j => cells[j].s);
   targets.filter(j => !cells[j].s).forEach(j => flood(j));
   sfx.dig();
-  if (slime !== undefined) stepSlime(slime); else { updateHud(); checkWin(); }
+  if (slimes.length && satanOn()) { slimes.forEach(hitSlime); checkWin(); }
+  else if (slimes.length) stepSlime(slimes[0]);
+  else { updateHud(); checkWin(); }
 }
 function toggleFlag(i) {
   const c = cells[i];
@@ -1646,38 +1866,292 @@ board.addEventListener('pointerup', e => {
 board.addEventListener('pointercancel', cancelPress);
 board.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') cancelPress(); });
 
-/* --- ошибка = страница --- */
+/* --- битва: слаймы падают с неба, режь их свайпом --- */
+const Battle = (() => {
+  const root = $('#battle'), cv = $('#bcv'), g = cv.getContext('2d');
+  const IM = {};
+  ['angry', 'bomb'].forEach(k => { IM[k] = new Image(); IM[k].src = SPR[k]; });
+  const fine = matchMedia('(pointer:fine)').matches;
+  let BW = 320, BH = 420, S = 60, st = null, lineT = null;
+  function fit() {
+    const r = cv.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1);
+    BW = Math.max(60, r.width); BH = Math.max(60, r.height);
+    cv.width = Math.round(BW * d); cv.height = Math.round(BH * d);
+    g.setTransform(d, 0, 0, d, 0, 0); g.imageSmoothingEnabled = false;
+    S = Math.max(46, Math.min(84, BW / 6.2));
+  }
+  addEventListener('resize', () => { if (st) fit(); });
+  // 20–30 слаймов за 30 секунд, группами по 1–4 (для комбо) + 4–6 красных бомб
+  function plan() {
+    const total = 20 + (Math.random() * 11 | 0), bombs = 4 + (Math.random() * 3 | 0);
+    const groups = []; let left = total;
+    while (left > 0) { const n = Math.min(left, [1, 1, 2, 2, 3, 3, 4][Math.random() * 7 | 0]); groups.push(n); left -= n; }
+    const list = [];
+    groups.forEach((n, k) => {
+      const t = .4 + 24.6 * (k + Math.random() * .5) / groups.length;
+      for (let j = 0; j < n; j++) list.push({t: t + j * .1, bomb: false});
+    });
+    for (let b = 0; b < bombs; b++) list.push({t: 2.5 + Math.random() * 21, bomb: true});
+    list.sort((a, b) => a.t - b.t);
+    return {list, total, need: Math.ceil(total * .8)};
+  }
+  function spawn(ev) {
+    const T = 3.4 - 1.1 * Math.min(1, st.clock / 25) + Math.random() * .5; // к концу падают быстрее
+    const vy = 30 + Math.random() * 50, dist = BH + S * 1.6;
+    st.items.push({x: S * .7 + Math.random() * Math.max(1, BW - S * 1.4), y: -S * .8, vx: (Math.random() - .5) * 60, vy,
+      gr: Math.max(25, 2 * (dist - vy * T) / (T * T)), rot: (Math.random() - .5) * .6, vr: (Math.random() - .5) * 2.6, bomb: ev.bomb, alive: true});
+  }
+  function say(text) {
+    clearInterval(lineT);
+    const el = $('#bLine'); let k = 0; el.textContent = '';
+    lineT = setInterval(() => {
+      k++; el.textContent = text.slice(0, k);
+      if (k % 2 && text[k - 1] !== ' ') sfx.blip();
+      if (k >= text.length) clearInterval(lineT);
+    }, 28);
+  }
+  function big(text, cls) { $('#bBig').innerHTML = text ? `<div class="bt ${cls || ''}">${text}</div>` : ''; }
+  function hud() {
+    const left = Math.max(0, st.dur - st.clock), t = $('#bTime');
+    t.textContent = Math.ceil(left) + ' с'; t.classList.toggle('warn', left < 8 && st.phase === 'run');
+    $('#bCut').textContent = st.cut; $('#bNeed').textContent = st.need;
+    $('#bFill').style.width = Math.min(100, st.cut / st.total * 100) + '%';
+    $('#bFill').classList.toggle('ok', st.cut >= st.need);
+    $('#bMark').style.left = (st.need / st.total * 100) + '%';
+  }
+  function pop(text, x, y, col, size) {
+    const p = {text, x, y, col, size: size || 14, life: 1.1}; st.pops.push(p); return p;
+  }
+  function goo(x, y, cols, n, power) {
+    for (let k = 0; k < n; k++) {
+      const a = Math.random() * 6.283, sp = power * (.3 + Math.random());
+      st.goo.push({x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - power * .4, life: .6 + Math.random() * .5, c: cols[k % cols.length], sz: 3 + (Math.random() * 4 | 0)});
+    }
+  }
+  function cutItem(it, ang) {
+    it.alive = false;
+    if (it.bomb) {
+      st.dur -= 2; st.flash = .45; st.shake = .35;
+      sfx.bomb(); haptic('err');
+      pop('−2 сек', it.x, it.y, '#E0565B', 18);
+      goo(it.x, it.y, ['#E0565B', '#A8323A', '#F4A6A0'], 26, 260);
+      return;
+    }
+    st.cut++; st.stroke++;
+    const nx = -Math.sin(ang), ny = Math.cos(ang), rot = ang - Math.PI / 2;
+    [-1, 1].forEach(sd => st.halves.push({x: it.x - sd * nx * 4, y: it.y - sd * ny * 4,
+      vx: it.vx * .5 - sd * nx * 150, vy: Math.min(it.vy, 60) - sd * ny * 150 - 60, rot, vr: sd * (2 + Math.random() * 3), side: sd, life: 1.6}));
+    goo(it.x, it.y, ['#5EC8E5', '#BDEFFA', '#2E8FB8'], 14, 200);
+    sfx.slice(); haptic('light');
+    if (st.stroke >= 3) {
+      const txt = `КОМБО ×${st.stroke}!`;
+      if (st.combo && st.combo.life > 0 && st.combo.id === st.strokeId) { st.combo.text = txt; st.combo.life = 1.1; st.combo.x = it.x; st.combo.y = it.y - S * .6; }
+      else { st.combo = pop(txt, it.x, it.y - S * .6, '#FFE27A', 18); st.combo.id = st.strokeId; }
+      sfx.combo(st.stroke);
+    }
+  }
+  const segD = (px, py, ax, ay, bx, by) => {
+    const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy;
+    let t = l ? ((px - ax) * dx + (py - ay) * dy) / l : 0; t = t < 0 ? 0 : t > 1 ? 1 : t;
+    return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+  };
+  function addPt(x, y) {
+    const tr = st.trail, p = tr[tr.length - 1];
+    tr.push({x, y, t: performance.now()});
+    if (!p || st.phase !== 'run' || Math.hypot(x - p.x, y - p.y) < 3) return;
+    const ang = Math.atan2(y - p.y, x - p.x);
+    for (const it of st.items) if (it.alive && segD(it.x, it.y, p.x, p.y, x, y) < S * .42) cutItem(it, ang);
+    checkEnd();
+  }
+  const rel = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener('pointerdown', e => {
+    if (!st || st.phase === 'end') return;
+    e.preventDefault();
+    try { cv.setPointerCapture(e.pointerId); } catch (er) {}
+    st.down = true; st.stroke = 0; st.strokeId++; st.trail = [];
+    addPt(...rel(e));
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!st || !st.down) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+    (evs.length ? evs : [e]).forEach(ev => { if (st && st.down) addPt(...rel(ev)); });
+  });
+  const up = () => { if (st) { st.down = false; st.stroke = 0; } };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+  function checkEnd() {
+    if (!st || st.phase !== 'run') return;
+    if (st.cut >= st.need) finish(true);
+    else if (st.missed > st.total - st.need || st.clock >= st.dur) finish(false);
+  }
+  function finish(won) {
+    st.phase = 'end'; st.won = won; st.down = false;
+    Music.battle(false);
+    (won ? sfx.bwin : sfx.blose)(); haptic(won ? 'ok' : 'err');
+    big(won ? 'ПОБЕДА!' : 'ПРОВАЛ', won ? '' : 'bad');
+    hud();
+    setTimeout(result, 900);
+  }
+  function result() {
+    if (!st) return;
+    big('');
+    const won = st.won, box = $('#bRes');
+    box.innerHTML = `<img src="${SPR.angry}" alt="" class="${won ? 'dizzy' : 'laugh'}">` +
+      (won ? `<div class="bt">ПОБЕДА!</div>` : `<div class="bt bad">ПРОВАЛ</div>`) +
+      `<div class="bs">Порезано ${st.cut} из ${st.total}${won ? '' : `, а нужно было ${st.need}`}</div>` +
+      (won ? `<div class="bs">${BWINS[Math.random() * BWINS.length | 0]}</div>`
+           : `<div class="taunt">* ${esc(TAUNTS[Math.random() * TAUNTS.length | 0])}</div>
+              <div class="bs">${st.shielded ? 'Сгорит золотое сердце, настоящее останется.' : 'Минус одно сердце.'}</div>`) +
+      `<button class="btn ${won ? 'green' : ''}" id="bOk">${won ? 'Дальше' : 'Ладно…'}</button>`;
+    box.classList.add('show');
+    say(won ? '* Слайм больше не злится. Он просто обижен.' : '* Слайм смеётся над тобой. Громко.');
+    $('#bOk').onclick = close;
+  }
+  function close() {
+    const s = st; if (!s) return;
+    cancelAnimationFrame(s.raf); clearInterval(lineT); st = null;
+    root.classList.remove('show'); $('#bRes').classList.remove('show'); $('#bRes').innerHTML = '';
+    s.resolve({won: s.won, cut: s.cut, total: s.total, need: s.need});
+  }
+  function frame(ts) {
+    if (!st) return;
+    const dt = Math.min(.05, st.last ? (ts - st.last) / 1000 : 0); st.last = ts;
+    if (st.phase === 'run') {
+      st.clock += dt;
+      while (st.plan.length && st.plan[0].t <= st.clock) spawn(st.plan.shift());
+      for (const it of st.items) {
+        if (!it.alive) continue;
+        it.vy += it.gr * dt; it.x += it.vx * dt; it.y += it.vy * dt; it.rot += it.vr * dt;
+        if ((it.x < S * .45 && it.vx < 0) || (it.x > BW - S * .45 && it.vx > 0)) it.vx = -it.vx;
+        if (it.y > BH + S) { it.alive = false; if (!it.bomb) st.missed++; }
+      }
+      st.items = st.items.filter(it => it.alive);
+      checkEnd();
+      if (st && st.phase === 'run') hud();
+    }
+    for (const h of st.halves) { h.vy += 700 * dt; h.x += h.vx * dt; h.y += h.vy * dt; h.rot += h.vr * dt; h.life -= dt; }
+    st.halves = st.halves.filter(h => h.life > 0 && h.y < BH + S * 2);
+    for (const p of st.goo) { p.vy += 600 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; }
+    st.goo = st.goo.filter(p => p.life > 0);
+    for (const p of st.pops) { p.y -= 34 * dt; p.life -= dt; }
+    st.pops = st.pops.filter(p => p.life > 0);
+    st.flash = Math.max(0, st.flash - dt); st.shake = Math.max(0, st.shake - dt);
+    render();
+    st.raf = requestAnimationFrame(frame);
+  }
+  function render() {
+    g.save();
+    g.clearRect(0, 0, BW, BH);
+    if (st.shake > 0) { const k = st.shake / .35 * 9; g.translate((Math.random() - .5) * k, (Math.random() - .5) * k); }
+    const tt = performance.now() / 1000;
+    for (const s of st.stars) { g.globalAlpha = .3 + .7 * Math.abs(Math.sin(tt * s.sp + s.ph)); g.fillStyle = s.c; g.fillRect(s.x * BW | 0, s.y * BH | 0, s.z, s.z); }
+    g.globalAlpha = 1;
+    const sw = S, sh = S * .75;
+    for (const it of st.items) {
+      g.save(); g.translate(it.x, it.y); g.rotate(it.rot);
+      g.drawImage(IM[it.bomb ? 'bomb' : 'angry'], -sw / 2, -sh / 2, sw, sh); g.restore();
+    }
+    for (const h of st.halves) {
+      g.save(); g.globalAlpha = Math.min(1, h.life * 2); g.translate(h.x, h.y); g.rotate(h.rot);
+      if (h.side < 0) g.drawImage(IM.angry, 0, 0, 8, 12, -sw / 2, -sh / 2, sw / 2, sh);
+      else g.drawImage(IM.angry, 8, 0, 8, 12, 0, -sh / 2, sw / 2, sh);
+      g.restore();
+    }
+    for (const p of st.goo) { g.globalAlpha = Math.min(1, p.life * 2); g.fillStyle = p.c; g.fillRect(p.x | 0, p.y | 0, p.sz, p.sz); }
+    g.globalAlpha = 1;
+    const now = performance.now();
+    st.trail = st.trail.filter(p => now - p.t < 160);
+    if (st.trail.length > 1) {
+      g.lineCap = 'round'; g.lineJoin = 'round';
+      for (let k = 1; k < st.trail.length; k++) {
+        const a = st.trail[k - 1], b = st.trail[k], f = Math.max(0, 1 - (now - b.t) / 160);
+        g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y);
+        g.strokeStyle = `rgba(94,200,229,${.45 * f})`; g.lineWidth = 12 * f + 2; g.stroke();
+        g.strokeStyle = `rgba(255,255,255,${f})`; g.lineWidth = 5 * f + 1; g.stroke();
+      }
+    }
+    g.textAlign = 'center';
+    for (const p of st.pops) {
+      g.globalAlpha = Math.min(1, p.life * 2); g.font = `${p.size}px "Press Start 2P", monospace`;
+      const x = Math.max(p.size * 4, Math.min(BW - p.size * 4, p.x));
+      g.fillStyle = '#000'; g.fillText(p.text, x + 2, p.y + 2); g.fillStyle = p.col; g.fillText(p.text, x, p.y);
+    }
+    g.globalAlpha = 1;
+    if (st.flash > 0) { g.fillStyle = `rgba(224,86,91,${st.flash})`; g.fillRect(0, 0, BW, BH); }
+    g.restore();
+  }
+  function run(shielded) {
+    return new Promise(resolve => {
+      const P = plan();
+      st = {phase: 'intro', clock: 0, dur: 30, plan: P.list, total: P.total, need: P.need, items: [], halves: [], goo: [], pops: [], trail: [],
+        cut: 0, missed: 0, stroke: 0, strokeId: 0, flash: 0, shake: 0, resolve, shielded, won: false, down: false,
+        stars: Array.from({length: 60}, () => ({x: Math.random(), y: Math.random(), z: Math.random() < .2 ? 2 : 1, c: Math.random() < .3 ? '#9FB0E8' : '#FFFFFF', sp: .5 + Math.random() * 2, ph: Math.random() * 6}))};
+      root.classList.add('show'); $('#bRes').classList.remove('show'); $('#bRes').innerHTML = '';
+      $('#bGold').style.display = shielded ? '' : 'none';
+      fit(); hud();
+      big('БИТВА!');
+      Music.battle(true);
+      say(shielded ? '* Слайм проснулся! Золотое сердце прикроет тебя.' : '* Слайм проснулся и позвал друзей!');
+      setTimeout(() => { if (st && st.phase === 'intro') big('РЕЖЬ!', 'go'); }, 1300);
+      setTimeout(() => {
+        if (!st || st.phase !== 'intro') return;
+        st.phase = 'run'; big('');
+        say(fine ? '* Зажми мышь и веди по слаймам. Красных не трогай!' : '* Проводи пальцем по слаймам. Красных не трогай!');
+      }, 2000);
+      st.raf = requestAnimationFrame(frame);
+    });
+  }
+  return {run, get st() { return st; }, get S() { return S; }};
+})();
+
+/* --- ошибка = битва + страница --- */
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function stepSlime(i) {
   const c = cells[i];
   c.o = true; c.b = true; c.lit = false; draw(i);
-  over = true; // блокируем ввод, пока Рин пишет в дневник
+  over = true; // блокируем поле на время битвы и записи в дневник
+  if (sensing) { sensing = false; document.body.classList.remove('sensing'); }
   sfx.boing(); haptic('heavy');
   board.classList.remove('shake'); void board.offsetWidth; board.classList.add('shake');
   const r = els[i].getBoundingClientRect();
   burst(r.left + r.width / 2, r.top + r.height / 2, 16, ['#5EC8E5', '#BDEFFA', '#2E8FB8'], 4.5, .22);
   bubble(els[i], SHOUTS[(Math.random() * SHOUTS.length) | 0]);
-  let saved = false;
-  if (lifeReady) { lifeReady = false; saved = true; } else hearts--;
   fieldErrs++;
-  const hs = $('#hearts').children; if (!saved && hs[hearts]) { hs[hearts].classList.remove('pop'); void hs[hearts].offsetWidth; hs[hearts].classList.add('pop'); }
+  setRin('shock');
+  const shielded = goldUntil > Date.now(); // золотое сердце защищает, если наступил, пока оно горит
+  await wait(900);
+  const pausedAt = Date.now();
+  const res = await Battle.run(shielded);
+  fieldT0 += Date.now() - pausedAt; // время битвы не идёт в зачёт уровня
+  let burned = false;
+  const hs = $('#hearts').children;
+  if (!res.won) {
+    if (shielded) {
+      burned = true; goldUntil = 0;
+      const h = hs[hearts - 1];
+      if (h) { const hr = h.getBoundingClientRect(); burst(hr.left + hr.width / 2, hr.top + hr.height / 2, 18, ['#FFE27A', '#F3B63F', '#FFF3C4'], 3.5, .1); }
+    } else {
+      hearts--;
+      if (hs[hearts]) { hs[hearts].classList.remove('pop'); void hs[hearts].offsetWidth; hs[hearts].classList.add('pop'); }
+    }
+  }
   rinBase = hearts <= 1 ? 'oops' : 'calm';
-  setRin('shock', 2600);
+  setRin(res.won ? 'happy' : 'sad', 2200);
   save.mistakes++;
   const pg = {k:'m', i: save.mistakes - 1, d: save.day, lv: L.id};
   save.pages.push(pg);
   const ai = ABIL.findIndex(a => a.need === save.mistakes);
   let apg = null;
-  if (ai >= 0) { apg = {k:'a', i: ai, d: save.day}; save.pages.push(apg); if (ai === 2) lifeReady = true; }
+  if (ai >= 0) { apg = {k:'a', i: ai, d: save.day}; save.pages.push(apg); }
   persist(); updateHud(); updateAbil();
-  await wait(1150);
+  await wait(350);
   sfx.page();
-  await modal(`<div class="mhead">${saved ? 'Вторая жизнь спасла сердце!' : 'Новая страница в дневнике'}</div>` + pageHTML(pg, `стр. ${save.mistakes}`),
-    [{text:'Записал', v:1}]);
+  const head = res.won ? 'Слайм побеждён — сердце цело!' : burned ? 'Сгорело золотое сердце, настоящее цело' : 'Минус сердце. Новая страница';
+  await modal(`<div class="mhead">${head}</div>` + pageHTML(pg, `стр. ${save.mistakes}`), [{text:'Записал', v:1}]);
   if (apg) {
     sfx.light(); haptic('ok'); setRin('happy', 2000);
     await modal(`<div class="mhead">Открыта способность: ${ABIL[ai].name}</div>` + pageHTML(apg), [{text:'Круто!', v:1, cls:'green'}]);
-    updateHud();
+    updateHud(); updateAbil();
   }
   over = false;
   if (hearts <= 0) lose(); else checkWin();
@@ -1732,10 +2206,18 @@ async function lose() {
 }
 
 /* --- способности --- */
+function abilGate(k, ai) {
+  if (over || modalOpen) return false;
+  const a = ABIL[ai], now = Date.now(), on = k === 'life' ? goldUntil : k === 'satan' ? satanUntil : 0;
+  if (save.mistakes < a.need) { toast(`${a.name} откроется на ${a.need}-й странице дневника`); return false; }
+  if (on > now) { toast(`${a.name} уже действует`); return false; }
+  if (cd[k] > now) { toast(`${a.name} перезаряжается: ${fmtTime(cd[k] - now)}`); return false; }
+  const b = blocker(k); if (b) { toast(`Пока действует «${b}», другие способности недоступны`); return false; }
+  return true;
+}
+function cancelSense() { if (sensing) { sensing = false; document.body.classList.remove('sensing'); } }
 $('#abLight').onclick = () => {
-  if (over || modalOpen) return;
-  if (save.mistakes < 3) { toast('Свет откроется на 3-й странице дневника'); return; }
-  if (cd.light > Date.now()) { toast('Свет ещё перезаряжается'); return; }
+  if (!abilGate('light', 0)) return;
   if (!started) { toast('Сначала сделай первый шаг — он всегда безопасный'); return; }
   const safe = cells.map((c, i) => i).filter(i => !cells[i].o && !cells[i].s && !cells[i].f && !cells[i].lit);
   if (!safe.length) { toast('Безопасных клеток не осталось'); return; }
@@ -1751,15 +2233,33 @@ $('#abLight').onclick = () => {
 };
 $('#abSense').onclick = () => {
   if (over || modalOpen) return;
-  if (save.mistakes < 6) { toast('Чутьё откроется на 6-й странице дневника'); return; }
-  if (cd.sense > Date.now()) { toast('Чутьё ещё перезаряжается'); return; }
+  if (!sensing && !abilGate('sense', 1)) return;
   if (!started) { toast('Сначала сделай первый шаг'); return; }
   sensing = !sensing; document.body.classList.toggle('sensing', sensing); updateAbil();
   toast(sensing ? 'Нажми на любую клетку — Чутьё посчитает слаймов в её строке' : 'Чутьё отменено');
 };
 $('#abLife').onclick = () => {
-  if (save.mistakes < 9) toast('Вторая жизнь откроется на 9-й странице');
-  else toast(lifeReady ? 'Первый слайм на этом поле не отнимет сердце' : 'Вторая жизнь на этом поле уже потрачена');
+  if (!abilGate('life', 2)) return;
+  cancelSense();
+  const now = Date.now();
+  goldUntil = now + ABIL[2].dur * 1000; cd.life = now + ABIL[2].cd * 1000;
+  sfx.gold(); haptic('ok'); setRin('happy', 1500);
+  updateHud(); updateAbil();
+  const h = $('#hearts').children[hearts - 1];
+  if (h) { const r = h.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 18, ['#FFE27A', '#F3B63F', '#FFF3C4'], 3.5, .08); }
+  toast('Золотое сердце на 15 секунд: проиграешь битву — сгорит оно, а не настоящее', 3200);
+};
+$('#abSatan').onclick = () => {
+  if (!abilGate('satan', 3)) return;
+  cancelSense();
+  const now = Date.now();
+  satanUntil = now + ABIL[3].dur * 1000; cd.satan = now + ABIL[3].cd * 1000;
+  sfx.satan(); haptic('heavy'); setRin('happy', 1500);
+  updateHud(); updateAbil();
+  setTimeout(() => { updateHud(); updateAbil(); }, ABIL[3].dur * 1000 + 40);
+  const r = board.getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2, 30, ['#E0565B', '#A8323A', '#FFE27A'], 6, .12);
+  toast('Satanic! 3 секунды наступай куда хочешь', 2600);
 };
 function useSense(i) {
   sensing = false; document.body.classList.remove('sensing');
@@ -1785,6 +2285,7 @@ function openDiary(from) {
   const list = $('#dlist');
   const m = save.mistakes;
   const next = ABIL.find(a => a.need > m);
+  const prevNeed = ABIL.reduce((x, a) => a.need <= m ? Math.max(x, a.need) : x, 0);
   let html = '';
   if (save.finished) {
     html += `<div class="finale"><h3>Как новичок стал сапёром</h3>
@@ -1794,7 +2295,7 @@ function openDiary(from) {
   }
   html += `<div class="prog"><b>Страниц-ошибок: ${m}</b>
     ${ABIL.map(a => `<div class="row ${m >= a.need ? '' : 'off'}"><i style="background-image:var(--spr-${a.spr})"></i>${a.need} стр. — ${a.desc}</div>`).join('')}
-    ${next ? `<div class="bar"><div style="width:${Math.min(100, (m % 3) / 3 * 100)}%"></div></div>
+    ${next ? `<div class="bar"><div style="width:${Math.min(100, (m - prevNeed) / (next.need - prevNeed) * 100)}%"></div></div>
       <div style="font-weight:800;font-size:13px;margin-top:6px">До «${next.name}»: ещё ${next.need - m} ${plural(next.need - m, 'страница', 'страницы', 'страниц')}</div>`
       : '<div style="font-weight:800;margin-top:6px">Все способности открыты!</div>'}</div>`;
   if (!save.pages.length) html += `<div class="dempty">Пока пусто.<br>Ошибись — и тут появится первая страница. Серьёзно, это нормально.</div>`;
@@ -1810,7 +2311,7 @@ $('#btnReset').onclick = async () => {
 
 async function renderTrack(i, secs) {
   const oac = new OfflineAudioContext(2, Math.floor(44100 * secs), 44100);
-  const tr = TRACKS[i], g = oac.createGain(); g.gain.value = tr.gain || .5; g.connect(oac.destination);
+  const tr = typeof i === 'object' ? i : TRACKS[i], g = oac.createGain(); g.gain.value = tr.gain || .5; g.connect(oac.destination);
   const e = makeEngine(oac, g);
   e.setBpm(tr.bpm); e.vinyl(!!tr.vinyl);
   let t = .05, step = 0, loop = 0;
@@ -1819,7 +2320,8 @@ async function renderTrack(i, secs) {
   let pk = 0, ss = 0, nan = false; for (let k = 0; k < d.length; k++) { const v = Math.abs(d[k]); if (v !== v) nan = true; if (v > pk) pk = v; ss += d[k] * d[k]; }
   return {peak: +pk.toFixed(3), rms: +Math.sqrt(ss / d.length).toFixed(4), nan};
 }
-if (/[?&]debug/.test(location.search)) window.__dbg = {get cells() { return cells; }, get W() { return W; }, scene: setScene, spr: SPR, face: FACE, renderTrack, Music};
+if (/[?&]debug/.test(location.search)) window.__dbg = {get cells() { return cells; }, get W() { return W; }, scene: setScene, spr: SPR, face: FACE, renderTrack, Music, Battle, TRACKS, BATTLE,
+  setPages(n) { save.mistakes = n; persist(); }, get hearts() { return hearts; }, get gold() { return goldUntil; }};
 $('#menuRadio').innerHTML = radioHTML(true);
 openMenu();
 radioUI();
