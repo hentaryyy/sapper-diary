@@ -216,6 +216,19 @@ body.sensing .closed{cursor:crosshair}
 .taunt{border:3px solid #fff;padding:10px 12px;font-size:11px;line-height:1.8;max-width:330px;text-align:left;color:#fff}
 .bres .btn{min-width:150px}
 .bline{width:100%;max-width:640px;margin:10px auto 0;min-height:3.9em;font-size:11px;line-height:1.7;border:4px solid #fff;padding:8px 10px;flex:none}
+#finale{position:fixed;inset:0;z-index:29;background:#000;display:none;flex-direction:column;
+  padding:calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));color:#fff;font-family:var(--px)}
+#finale.show{display:flex}
+.fbox{position:relative;flex:1;min-height:0;border:4px solid #fff;overflow:hidden;width:100%;max-width:640px;margin:0 auto;background:#0A0E24}
+#fcv{position:absolute;inset:0;width:100%;height:100%;image-rendering:crisp-edges;image-rendering:pixelated}
+.fskip{position:absolute;right:8px;top:8px;z-index:2;font-family:var(--px);font-size:9px;color:#fff;background:rgba(0,0,0,.55);border:2px solid #fff;padding:7px 9px;cursor:pointer}
+.fcred{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;background:rgba(0,0,0,.6);padding:16px}
+.fcred.show{display:flex;animation:rise .8s both}
+.fcred .t1{font-size:20px;color:#FFE27A;text-shadow:3px 3px 0 #A9531A;line-height:1.4}
+.fcred .t2{font-size:11px;line-height:1.8}
+.fcred .t3{font-family:var(--txt);font-weight:800;font-size:16px;color:#F1D3A2;font-style:italic;max-width:320px}
+.fcred .btns{display:flex;gap:10px;margin-top:8px}
+.finale .btn{margin-top:12px;width:100%}
 @keyframes bigin{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
 @keyframes hop2{to{transform:translateY(-8px)}}
 .ctrl{display:flex;gap:8px;align-items:stretch}
@@ -326,6 +339,14 @@ body.sensing .closed{cursor:crosshair}
 .tdel{font-style:normal;display:inline-block;margin-left:10px;padding:2px 8px;background:#A8323A;color:#fff;font-weight:900;font-size:14px;line-height:1.2}
 .tsec{font-family:var(--px);font-size:8px;color:var(--cream);margin:8px 2px 0;line-height:1.5;text-shadow:0 2px 0 #000}
 .ytadd{display:flex;flex-direction:column;gap:8px}
+.vols{display:flex;flex-direction:column;gap:8px;background:#1E1A24;border:3px solid #000;box-shadow:0 4px 0 rgba(0,0,0,.35);padding:8px 10px 10px}
+.vols .tsec{margin:0}
+.vols label{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--cream)}
+.vols span{width:64px;flex:none}
+.vols b{width:30px;text-align:right;font-family:var(--px);font-size:9px;color:#FFE27A}
+.vols input{flex:1;-webkit-appearance:none;appearance:none;height:12px;background:#3A2416;border:3px solid #000;outline:none}
+.vols input::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:22px;background:var(--pumpkin);border:3px solid #000;cursor:pointer}
+.vols input::-moz-range-thumb{width:14px;height:18px;background:var(--pumpkin);border:3px solid #000;border-radius:0;cursor:pointer}
 .ynote{font-size:12px;font-weight:800;color:#E8DCC8;line-height:1.4}
 .sndi{display:block;width:22px;height:18px;background-size:contain;background-repeat:no-repeat;background-position:center;image-rendering:crisp-edges;image-rendering:pixelated;background-image:var(--spr-spk)}
 .sndi.off{background-image:var(--spr-spkx)}
@@ -386,7 +407,7 @@ body.sensing .closed{cursor:crosshair}
   </div>
   <div class="hud">
     <img class="rin" id="rinHud" alt="Рин">
-    <div class="hearts" id="hearts"><i></i><i></i><i></i></div>
+    <div class="hearts" id="hearts"><i></i></div>
     <div class="stat" title="Страниц в дневнике"><i class="hud-ico ico-page"></i><span id="pagesN">0</span></div>
     <div class="stat" title="Слаймов осталось"><i class="hud-ico ico-slime"></i><span id="slimesN">10</span></div>
   </div>
@@ -428,6 +449,11 @@ body.sensing .closed{cursor:crosshair}
   <div class="bbar"><div id="bFill"></div><i id="bMark"></i></div>
   <div class="bbox"><canvas id="bcv"></canvas><div class="bbig" id="bBig"></div><div class="bres" id="bRes"></div></div>
   <div class="bline" id="bLine"></div>
+</div>
+<div id="finale">
+  <div class="fbox"><canvas id="fcv"></canvas><div class="fcred" id="fCred"></div>
+    <button class="fskip" id="fSkip">пропустить ›</button></div>
+  <div class="bline" id="fLine"></div>
 </div>
 <div id="toast"></div>
 <div id="modal"><div class="mbox" id="mbox"></div></div>
@@ -733,7 +759,7 @@ const ABIL = [
     desc:'Чутьё: считает слаймов в строке. Раз в 40 секунд.'},
   {key:'life', need:9, cd:300, dur:15, name:'Вторая жизнь', spr:'life',
     page:'Научился падать мягко. И золотить сердце.',
-    desc:'Вторая жизнь: на 15 секунд одно сердце становится золотым. Проиграл битву — сгорает золото, а не сердце. Раз в 5 минут.'},
+    desc:'Вторая жизнь: сердце становится золотым на 15 секунд. Наступил на слайма — битвы нет, золото пропадает. Раз в 5 минут.'},
   {key:'satan', need:15, cd:180, dur:3, name:'Satanic', spr:'devil',
     page:'Пятнадцать страниц. Теперь слаймы меня боятся. Немного. Секунды три.',
     desc:'Satanic: 3 секунды неуязвимости — наступай куда угодно, слаймы просто показываются. Раз в 3 минуты.'},
@@ -770,7 +796,7 @@ const fmtTime = ms => { const s = Math.max(0, Math.round(ms / 1000)); return `${
    СОХРАНЕНИЕ (localStorage + облако Telegram)
    ===================================================== */
 const KEY = 'sapper-diary-v1';
-const defSave = () => ({pages:[], mistakes:0, unlocked:1, done:[false,false,false], best:[null,null,null], day:0, muted:false, music:true, track:0, trackId:null, finished:false, seenHelp:false});
+const defSave = () => ({pages:[], mistakes:0, unlocked:1, done:[false,false,false], best:[null,null,null], day:0, muted:false, vol:.8, sfxVol:.8, music:true, track:0, trackId:null, finished:false, seenHelp:false});
 let save = defSave();
 try { const raw = localStorage.getItem(KEY); if (raw) save = Object.assign(defSave(), JSON.parse(raw)); } catch (e) {}
 if (!save.v2) { save.best = [save.best[0] || null, null, null]; save.v2 = true; } // рекорды старых 16×16 и 32×32 больше не подходят
@@ -817,7 +843,8 @@ function haptic(t) {
 }
 let actx = null;
 function tone(f1, f2, dur, type = 'square', vol = .045, delay = 0) {
-  if (save.muted) return;
+  if (save.muted || !(save.sfxVol > 0)) return;
+  vol *= save.sfxVol / .8;
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if (actx.state === 'suspended') actx.resume();
@@ -1168,6 +1195,19 @@ const BATTLE = {name:'Битва', bpm:150, gain:.52,
   drums:{k:[0,4,8,12], s:[4,12], h:[2,6,10,14], kv:.5, sv:.13, hv:.022, sr:.15},
   form:['A','B'],
   parts:{A:{}, B:{fill:1, notes:[[0,81,2],[2,79,2],[4,77,2],[6,74,2],[8,77,4],[12,81,4],[16,82,2],[18,81,2],[20,79,2],[22,77,2],[24,74,8],[32,84,2],[34,82,2],[36,81,2],[38,79,2],[40,76,4],[44,79,4],[48,81,4],[52,79,2],[54,77,2],[56,76,4],[60,73,4]]}}};
+// финальная тема: сначала тревожно (битва с королём), потом тепло (рассвет и титры)
+const FINALE = {name:'Финал', bpm:100, gain:.5,
+  chords:[[62,65,69],[58,62,65],[55,58,62],[57,61,64]], roots:[38,34,31,33],
+  pad:{type:'sawtooth', cutoff:1100, vol:.03, att:.3, rel:1.2, det:10, r:.6}, hits:[[0,16]],
+  bass:{type:'square', vol:.1, hits:[[0,0,1],[2,12,1],[4,0,1],[6,12,1],[8,0,1],[10,12,1],[12,0,1],[14,12,1]]},
+  arp:{type:'triangle', vol:.04, every:1, len:.12, oct:12, d:.4, r:.4, pat:[0,1,2,3,2,1]},
+  lead:{type:'square', vol:.034, cutoff:2600, d:.3, r:.35, notes:[[0,74,4],[4,77,4],[8,76,8],[16,74,4],[20,70,4],[24,69,8],[32,67,4],[36,70,4],[40,74,8],[48,73,4],[52,76,4],[56,69,8]]},
+  drums:{k:[0,8], s:[4,12], h:[2,6,10,14], kv:.45, sv:.11, hv:.02, sr:.3},
+  form:['T','T','W','W','W','W'],
+  parts:{
+    T:{arp:0, fill:1},
+    W:{chords:[[53,57,60],[55,60,64],[57,62,65],[58,62,65]], roots:[41,48,50,46], drums:'half', bass:0,
+      notes:[[0,72,4],[4,77,4],[8,76,4],[12,72,4],[16,74,6],[22,72,2],[24,76,8],[32,77,4],[36,81,4],[40,79,4],[44,77,4],[48,74,6],[54,76,2],[56,77,8]]}}};
 const loopsOf = tr => tr.form ? tr.form.length : Math.max(4, Math.round(150 / (16 * 60 / tr.bpm)));
 function makeEngine(ac, out) {
   const nbuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
@@ -1287,7 +1327,7 @@ const TrackDB = (() => {
 })();
 const Music = (() => {
   TRACKS.forEach((t, i) => { t.id = 'b' + i; });
-  let ac = null, eng = null, out = null, timer = null, step = 0, nextT = 0, loop = 0, audio = null, override = null, gapT = null, resumeT = null;
+  let ac = null, eng = null, out = null, master = null, timer = null, step = 0, nextT = 0, loop = 0, audio = null, override = null, gapT = null, resumeT = null;
   let playing = false, curId = TRACKS[0].id;
   const custom = [];
   try { localStorage.removeItem('sapper-yt'); localStorage.removeItem('sapper-tvpos'); } catch (e) {}
@@ -1298,7 +1338,8 @@ const Music = (() => {
     if (ac) return true;
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
-      out = ac.createGain(); out.gain.value = 0; out.connect(ac.destination);
+      master = ac.createGain(); master.gain.value = volK(); master.connect(ac.destination);
+      out = ac.createGain(); out.gain.value = 0; out.connect(master);
       eng = makeEngine(ac, out); return true;
     } catch (e) { ac = null; return false; }
   }
@@ -1336,7 +1377,7 @@ const Music = (() => {
     halt();
     const tr = cur(); curId = tr.id; save.trackId = tr.id; persist();
     if (tr.url) {
-      audio = new Audio(tr.url); audio.volume = .85;
+      audio = new Audio(tr.url); audio.volume = Math.min(1, .85 * volK());
       audio.onended = () => {
         savePos(tr.id, 0);
         const k = custom.indexOf(tr); if (custom.length > 1) curId = custom[(k + 1) % custom.length].id;
@@ -1351,9 +1392,8 @@ const Music = (() => {
     } else {
       if (!ensure()) { playing = false; toast('Музыка не поддерживается на этом устройстве'); radioUI(); return; }
       try { ac.resume(); } catch (e) {}
-      eng.setBpm(tr.bpm); step = 0; loop = 0; nextT = ac.currentTime + .8;
+      eng.setBpm(tr.bpm); step = 0; loop = 0; nextT = ac.currentTime + .1;
       out.gain.cancelScheduledValues(ac.currentTime); out.gain.setTargetAtTime(tr.gain || .5, ac.currentTime, .15);
-      eng.sting(ac.currentTime + .08);
       eng.vinyl(!!tr.vinyl); timer = setInterval(tick, 25); tick();
       toast('♪ Слайм FM: ' + tr.name, 2600);
     }
@@ -1402,18 +1442,25 @@ const Music = (() => {
       radioUI();
     }).catch(() => {});
   }
+  function volK() { const v = save.vol == null ? .8 : save.vol; return v / .8; } // .8 — громкость по умолчанию
+  function setVol(v) {
+    save.vol = Math.max(0, Math.min(1, v)); persist();
+    if (master) master.gain.setTargetAtTime(volK(), ac.currentTime, .05);
+    if (audio) audio.volume = Math.min(1, .85 * volK());
+  }
   function unlock() { if (ac && (playing || override) && ac.state !== 'running' ) { try { ac.resume(); } catch (e) {} } }
   // боевая музыка: радио замолкает, после битвы возвращается
-  function battle(on) {
+  function battle(on, track) {
     if (on) {
       if (save.muted) return;
       halt();
       if (!ensure()) return;
       try { ac.resume(); } catch (e) {}
-      override = BATTLE; eng.vinyl(false); eng.setBpm(BATTLE.bpm);
+      const tr = track || BATTLE;
+      override = tr; eng.vinyl(false); eng.setBpm(tr.bpm);
       step = 0; loop = 0; nextT = ac.currentTime + .08;
       out.gain.cancelScheduledValues(ac.currentTime); out.gain.setValueAtTime(0, ac.currentTime);
-      out.gain.linearRampToValueAtTime(BATTLE.gain, ac.currentTime + .15);
+      out.gain.linearRampToValueAtTime(tr.gain, ac.currentTime + .15);
       timer = setInterval(tick, 25); tick();
     } else {
       if (!override) return;
@@ -1426,7 +1473,7 @@ const Music = (() => {
     if (document.hidden) { if (ac) try { ac.suspend(); } catch (e) {} if (audio) audio.pause(); }
     else if (playing || override) { if (ac) try { ac.resume(); } catch (e) {} if (audio) audio.play().catch(() => {}); }
   });
-  return {play, stop, go, pick, addFiles, remove, loadSaved, unlock, cur, list, battle, toggle: () => (playing ? stop() : play()),
+  return {play, stop, go, pick, addFiles, remove, loadSaved, unlock, cur, list, battle, setVol, toggle: () => (playing ? stop() : play()),
     get playing() { return playing; }, get idx() { return curIndex(); }, get pos() { return audio ? audio.currentTime : -1; }};
 })();
 function radioHTML(big) {
@@ -1465,11 +1512,22 @@ function radioUI() {
 function openRadio() {
   if (modalOpen) return;
   modal(`<div class="mhead">Слайм FM</div>` + radioHTML(true) +
-    `<div class="tlist"></div>
+    `<div class="vols"><div class="tsec">Громкость</div>
+       <label><span>Музыка</span><input type="range" min="0" max="100" step="1" id="volMusic"><b id="volMusicN"></b></label>
+       <label><span>Звуки</span><input type="range" min="0" max="100" step="1" id="volSfx"><b id="volSfxN"></b></label></div>
+     <div class="tlist"></div>
      <div class="ytadd"><div class="tsec">Добавить свою музыку</div>
        <button class="btn small alt" data-a="own">+ mp3 с телефона или компьютера</button>
        <div class="ynote">Свой mp3 сохраняется на этом устройстве и дальше играет первым.</div></div>`,
-    [{text:'Закрыть', v:1, cls:'alt'}], () => radioUI());
+    [{text:'Закрыть', v:1, cls:'alt'}], box => {
+      radioUI();
+      const vm = box.querySelector('#volMusic'), vs = box.querySelector('#volSfx');
+      const show = () => { box.querySelector('#volMusicN').textContent = vm.value; box.querySelector('#volSfxN').textContent = vs.value; };
+      vm.value = Math.round((save.vol == null ? .8 : save.vol) * 100); vs.value = Math.round((save.sfxVol == null ? .8 : save.sfxVol) * 100); show();
+      vm.oninput = () => { Music.setVol(vm.value / 100); show(); };
+      vs.oninput = () => { save.sfxVol = vs.value / 100; show(); };
+      vs.onchange = () => { persist(); sfx.flag(); };
+    });
 }
 document.addEventListener('click', e => {
   const b = e.target.closest && e.target.closest('[data-a]'); if (!b) return;
@@ -1505,7 +1563,7 @@ function show(id) {
   if (tg && tg.BackButton && tgv('6.1')) { try { id === 'menu' ? tg.BackButton.hide() : tg.BackButton.show(); } catch (e) {} }
 }
 function goBack() {
-  if (modalOpen || Battle.st) return;
+  if (modalOpen || Battle.st || Finale.on) return;
   if (screen === 'diary') { if (diaryFrom === 'game') { show('game'); setTheme(L.theme); updateHorizon(); } else openMenu(); }
   else if (screen === 'game') openMenu();
 }
@@ -1616,9 +1674,9 @@ function showHelp() {
       <li><b>Флажок</b>: долгое нажатие, правая кнопка мыши или режим «Флажок».</li>
       <li>Нажми на цифру, вокруг которой стоят все флажки, — соседи откроются сами.</li>
       <li>Наступил на слайма — <b>битва</b>! С неба падают слаймы: режь их пальцем или мышью. Порезал 80% — сердце цело. Красных не трогай: минус 2 секунды.</li>
-      <li>У Рина <b>3 сердца</b>. Проиграл битву — минус сердце. Каждая ошибка — страница в дневнике.</li>
+      <li>У Рина <b>одно сердце</b>. Проиграл битву — поле начинается заново. Каждая ошибка — страница в дневнике.</li>
       <li>Страницы открывают способности: <b>3</b> — Свет, <b>6</b> — Чутьё, <b>9</b> — Вторая жизнь, <b>15</b> — Satanic.</li>
-      <li>Сердца кончились — новое поле. Дневник и способности остаются.</li>
+      <li>Новое поле не стирает дневник и способности.</li>
       <li>Большие поля можно <b>приближать двумя пальцами</b>.</li>
       <li>Кот в углу — это радио: треки игры или свой mp3. Там же музыку можно выключить.</li>
     </ul></div>`, [{text:'Понятно!', v:1}]);
@@ -1647,7 +1705,7 @@ function setRin(em, ms) {
 function startLevel(id) {
   L = LEVELS[id]; W = L.w; H = L.h; N = L.slimes;
   cells = Array.from({length: W * H}, () => ({s:false, n:0, o:false, f:false, b:false, lit:false, sl:false}));
-  started = false; hearts = 3; over = false; sensing = false; fieldErrs = 0; setMode('dig');
+  started = false; hearts = 1; over = false; sensing = false; fieldErrs = 0; setMode('dig');
   document.body.classList.remove('sensing');
   goldUntil = 0; satanUntil = 0;
   save.day++; persist();
@@ -1732,7 +1790,7 @@ function draw(i, anim) {
 }
 function updateHud() {
   const hs = $('#hearts').children, gold = goldUntil > Date.now();
-  for (let k = 0; k < 3; k++) { hs[k].classList.toggle('empty', k >= hearts); hs[k].classList.toggle('gold', gold && k === hearts - 1); }
+  for (let k = 0; k < hs.length; k++) { hs[k].classList.toggle('empty', k >= hearts); hs[k].classList.toggle('gold', gold && k === hearts - 1); }
   $('#pagesN').textContent = save.mistakes;
   const known = cells.filter(c => c.f || c.b || c.sl).length;
   $('#slimesN').textContent = Math.max(0, N - known);
@@ -1786,14 +1844,21 @@ function flood(i) {
   return count;
 }
 const satanOn = () => satanUntil > Date.now();
-// Satanic: слайм не просыпается, просто показывается
+const goldOn = () => goldUntil > Date.now();
+// Satanic или золотое сердце: слайм не просыпается, просто показывается (без битвы и без страницы)
 function hitSlime(i) {
-  if (!satanOn()) { stepSlime(i); return; }
+  const gold = !satanOn() && goldOn();
+  if (!satanOn() && !gold) { stepSlime(i); return; }
   const c = cells[i]; c.sl = true; c.lit = false; draw(i);
   const r = els[i].getBoundingClientRect();
-  burst(r.left + r.width / 2, r.top + r.height / 2, 10, ['#E0565B', '#FFE27A', '#A8323A'], 3, .1);
-  bubble(els[i], 'Хр-р… не заметил');
-  sfx.flag(); haptic('light'); updateHud();
+  burst(r.left + r.width / 2, r.top + r.height / 2, gold ? 18 : 10, gold ? ['#FFE27A', '#F3B63F', '#FFF3C4'] : ['#E0565B', '#FFE27A', '#A8323A'], 3, .1);
+  bubble(els[i], gold ? 'Ой, золото! Сплю дальше…' : 'Хр-р… не заметил');
+  if (gold) {
+    goldUntil = 0; sfx.gold(); haptic('ok');
+    toast('Золотое сердце спасло от битвы', 2200);
+    updateAbil();
+  } else { sfx.flag(); haptic('light'); }
+  updateHud();
 }
 function openCell(i) {
   const c = cells[i];
@@ -1815,7 +1880,7 @@ function chord(i) {
   const slimes = targets.filter(j => cells[j].s);
   targets.filter(j => !cells[j].s).forEach(j => flood(j));
   sfx.dig();
-  if (slimes.length && satanOn()) { slimes.forEach(hitSlime); checkWin(); }
+  if (slimes.length && (satanOn() || goldOn())) { const g = goldOn() && !satanOn(); slimes.forEach(j => { if (g) goldUntil = Date.now() + 1000; hitSlime(j); }); checkWin(); }
   else if (slimes.length) stepSlime(slimes[0]);
   else { updateHud(); checkWin(); }
 }
@@ -2001,7 +2066,7 @@ const Battle = (() => {
       `<div class="bs">Порезано ${st.cut} из ${st.total}${won ? '' : `, а нужно было ${st.need}`}</div>` +
       (won ? `<div class="bs">${BWINS[Math.random() * BWINS.length | 0]}</div>`
            : `<div class="taunt">* ${esc(TAUNTS[Math.random() * TAUNTS.length | 0])}</div>
-              <div class="bs">${st.shielded ? 'Сгорит золотое сердце, настоящее останется.' : 'Минус одно сердце.'}</div>`) +
+              <div class="bs">Сердце разбито — поле придётся начать заново.</div>`) +
       `<button class="btn ${won ? 'green' : ''}" id="bOk">${won ? 'Дальше' : 'Ладно…'}</button>`;
     box.classList.add('show');
     say(won ? '* Слайм больше не злится. Он просто обижен.' : '* Слайм смеётся над тобой. Громко.');
@@ -2104,6 +2169,156 @@ const Battle = (() => {
   return {run, get st() { return st; }, get S() { return S; }};
 })();
 
+/* --- финальная сцена: Рин побеждает Короля слаймов и становится сапёром --- */
+const Finale = (() => {
+  const root = $('#finale'), cv = $('#fcv'), g = cv.getContext('2d');
+  const img = src => { const i = new Image(); i.src = src; return i; };
+  const IM = {calm: img(FACE.calm), shock: img(FACE.shock), happy: img(FACE.happy), slime: img(SPR.slime), angry: img(SPR.angry)};
+  const LINES = [
+    [0, '* Ночь. Последнее поле у старой башни. Тишина…'],
+    [5, '* Земля дрожит. Из-под неё поднимается Король слаймов!'],
+    [10, '* КОРОЛЬ: Ты разбудил всех моих подданных. Каждого!'],
+    [15, '* Рин вспоминает все страницы дневника. И делает один точный взмах.'],
+    [19.5, '* Рассвет. Слаймы уползают в лес досыпать.'],
+    [24, '* Рин больше не новичок. Рин — опытный сапёр.'],
+  ];
+  const END = 28.5;
+  let LW = 160, LH = 240, raf = 0, t0 = 0, li = -1, lineT = null, resolve = null, credits = false, stars = [];
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mixH = (a, b, k) => { const A = hex(a), B = hex(b); return '#' + A.map((v, i) => Math.round(lerp(v, B[i], k)).toString(16).padStart(2, '0')).join(''); };
+  const mix = (a, b, k) => { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], k))).join(',')})`; };
+  const R = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+  function fit() {
+    const r = cv.getBoundingClientRect();
+    LW = 160; LH = Math.max(160, Math.round(160 * r.height / Math.max(1, r.width)));
+    cv.width = LW; cv.height = LH; g.imageSmoothingEnabled = false;
+  }
+  addEventListener('resize', () => { if (resolve) fit(); });
+  function say(text) {
+    clearInterval(lineT);
+    const el = $('#fLine'); let k = 0; el.textContent = '';
+    lineT = setInterval(() => { k++; el.textContent = text.slice(0, k); if (k % 2 && text[k - 1] !== ' ') sfx.blip(); if (k >= text.length) clearInterval(lineT); }, 32);
+  }
+  function rin(x, gy, t, face) {
+    const bob = Math.round(Math.abs(Math.sin(t * 8)) * (t < 4 ? 1 : 0));
+    R(x - 3, gy - 6, 2, 6, '#3A2416'); R(x + 1, gy - 6, 2, 6, '#3A2416');          // ноги
+    R(x - 5, gy - 15 - bob, 10, 10, '#D8792E'); R(x - 5, gy - 7 - bob, 10, 2, '#A9531A'); // куртка
+    R(x - 1, gy - 14 - bob, 2, 6, '#F1D3A2');                                        // шарф
+    g.drawImage(IM[face], x - 8, gy - 30 - bob, 16, 16);
+  }
+  function sword(x, y, ang, len) {
+    for (let k = 0; k < len; k++) R(x + Math.cos(ang) * k, y + Math.sin(ang) * k, 1, 1, k < 3 ? '#7A4A2C' : '#E8F4FF');
+  }
+  function crown(cx, top, w) {
+    const c = '#FFE27A', d = '#C9A94A';
+    R(cx - w / 2, top, w, 4, c); R(cx - w / 2, top + 3, w, 1, d);
+    for (let k = 0; k < 3; k++) { const px = cx - w / 2 + k * (w - 3) / 2; R(px, top - 4, 3, 4, c); R(px + 1, top - 5, 1, 1, '#E0565B'); }
+  }
+  function draw(t) {
+    g.clearRect(0, 0, LW, LH);
+    const dawn = clamp((t - 19.5) / 3.5), gy = Math.round(LH * .72);
+    const top = mixH('#0A0E24', '#5E4472', dawn), bot = mixH('#212D63', '#F8B672', dawn);
+    for (let k = 0; k < 8; k++) R(0, k * gy / 8, LW, gy / 8 + 1, mix(top, bot, k / 7));
+    if (dawn < 1) for (const s of stars) { g.globalAlpha = (1 - dawn) * (.4 + .6 * Math.abs(Math.sin(t * s.sp + s.ph))); R(s.x * LW, s.y * gy * .9, 1, 1, '#F1E6C8'); }
+    g.globalAlpha = 1;
+    // луна уходит, солнце встаёт
+    const my = lerp(gy * .22, gy + 20, dawn);
+    g.fillStyle = '#F4EBD0'; g.beginPath(); g.arc(LW * .8, my, 7, 0, 7); g.fill();
+    if (dawn > 0) { const sy = lerp(gy + 14, gy * .45, dawn); g.fillStyle = '#FFDB95'; g.beginPath(); g.arc(LW * .25, sy, 12, 0, 7); g.fill(); g.fillStyle = '#FFE27A'; g.beginPath(); g.arc(LW * .25, sy, 9, 0, 7); g.fill(); }
+    // холмы и башня
+    for (let x = 0; x < LW; x++) { const h = Math.round(gy - 4 - 3 * Math.sin(x * .07 + 1) - 2 * Math.sin(x * .19)); R(x, h, 1, gy - h, mix('#19214A', '#B5655E', dawn)); }
+    const tc = mix('#11163A', '#6B3F55', dawn); R(10, gy - 46, 14, 46, tc); R(8, gy - 48, 18, 3, tc);
+    for (let i = 0; i < 18; i += 4) R(8 + i, gy - 51, 2, 3, tc);
+    if (dawn < .8) R(16, gy - 38, 3, 4, '#FFE27A');
+    // Король слаймов: поднимается, грозно подпрыгивает, после взмаха разваливается
+    const kx = LW * .68, kw = 64, kh = 48;
+    if (t >= 5 && t < 16.4) {
+      const rise = clamp((t - 5) / 3), sq = t > 8 ? Math.sin(t * 6) * .06 : 0;
+      const w = kw * (1 + sq), h = kh * (1 - sq), y = gy - h * rise + (t > 8 ? 0 : 0);
+      g.save(); g.beginPath(); g.rect(0, 0, LW, gy); g.clip();
+      g.drawImage(IM.angry, kx - w / 2, y, w, h); crown(kx, y - 2 + h * .08, 22);
+      g.restore();
+      if (t > 5 && t < 8) for (let k = 0; k < 3; k++) R(kx - 30 + Math.random() * 60, gy - 2 - Math.random() * 4, 2, 2, '#3A2416');
+    }
+    if (t >= 16.4 && t < 21) {
+      const k = (t - 16.4), a = clamp(1 - k / 2.2);
+      g.globalAlpha = a;
+      g.drawImage(IM.angry, 0, 0, 8, 12, kx - kw / 2 - k * 30, gy - kh + k * k * 20, kw / 2, kh);
+      g.drawImage(IM.angry, 8, 0, 8, 12, kx + k * 30, gy - kh + k * k * 20, kw / 2, kh);
+      g.globalAlpha = 1;
+    }
+    // маленькие слаймы разбегаются в лес
+    if (t >= 17) for (let k = 0; k < 7; k++) {
+      const st = 17 + k * .35, x = kx - 20 + k * 7 + (t - st) * 22, hop = Math.abs(Math.sin((t - st) * 7 + k)) * 6;
+      if (t > st && x < LW + 20) g.drawImage(IM.slime, x, gy - 12 - hop, 16, 12);
+    }
+    // земля
+    R(0, gy, LW, LH - gy, mix('#1B3424', '#7A8B43', dawn)); R(0, gy, LW, 2, mix('#2F5A35', '#86964A', dawn));
+    for (let k = 0; k < 40; k++) { const x = (k * 37) % LW, y = gy + 4 + (k * 53) % Math.max(1, LH - gy - 6); R(x, y, 1, 2, mix('#2F5A35', '#53682C', dawn)); }
+    // Рин
+    const walk = clamp(t / 4), dash = t >= 15 && t < 16.4 ? (t - 15) / 1.4 : 0;
+    let rx = lerp(-12, LW * .3, walk); if (t >= 15 && t < 16.4) rx = lerp(LW * .3, kx - 30, dash); else if (t >= 16.4 && t < 17.2) rx = lerp(kx - 30, LW * .3, (t - 16.4) / .8);
+    const face = t >= 10 && t < 15 ? 'shock' : t >= 16.4 ? 'happy' : 'calm';
+    rin(rx, gy, t, face);
+    const swingA = t >= 15.6 && t < 16.4 ? lerp(-2.4, .4, (t - 15.6) / .8) : -.9;
+    sword(rx + 4, gy - 12, swingA, 12);
+    if (t >= 10 && t < 11.5) { R(rx - 1, gy - 40, 2, 6, '#E0565B'); R(rx - 1, gy - 32, 2, 2, '#E0565B'); }
+    // взмах: белая полоса и вспышка
+    if (t >= 16 && t < 16.8) {
+      const k = (t - 16) / .8; g.strokeStyle = `rgba(255,255,255,${1 - k})`; g.lineWidth = 3;
+      g.beginPath(); g.moveTo(kx - 40, gy - 50); g.lineTo(kx + 40, gy - 6); g.stroke();
+    }
+    if (t >= 16.2 && t < 16.9) { g.fillStyle = `rgba(255,255,255,${1 - (t - 16.2) / .7})`; g.fillRect(0, 0, LW, LH); }
+    // значок сапёра
+    if (t >= 24) {
+      const k = clamp((t - 24) / .6), cx = rx, cy = gy - 40 - (1 - k) * 10;
+      g.globalAlpha = k;
+      for (let a = 0; a < 8; a++) { const an = a / 8 * 6.283 + t; R(cx + Math.cos(an) * 10, cy + Math.sin(an) * 10, 1, 1, '#FFE27A'); }
+      R(cx - 1, cy - 4, 2, 8, '#FFE27A'); R(cx - 4, cy - 1, 8, 2, '#FFE27A'); R(cx - 2, cy - 2, 4, 4, '#F3B63F');
+      g.globalAlpha = 1;
+    }
+  }
+  function frame(ts) {
+    if (!resolve) return;
+    const t = (ts - t0) / 1000;
+    while (li + 1 < LINES.length && t >= LINES[li + 1][0]) { li++; say(LINES[li][1]); if (li === 1) haptic('heavy'); if (li === 3) { setTimeout(() => { sfx.slice(); sfx.bomb(); haptic('heavy'); }, 1050); } }
+    draw(Math.min(t, END));
+    if (t >= END && !credits) showCredits();
+    raf = requestAnimationFrame(frame);
+  }
+  function showCredits() {
+    credits = true;
+    const c = $('#fCred');
+    c.innerHTML = `<div class="t1">ДНЕВНИК<br>САПЁРА</div><div class="t2">SatanicTeam<br>автор — Мертес Вячеслав</div>
+      <div class="t3">«Ошибки — часть пути к тому, чтобы стать сильнее»</div>
+      <div class="t2">Страниц в дневнике Рина: ${save.mistakes}<br>Спасибо за игру!</div>
+      <div class="btns"><button class="btn small alt" id="fAgain">Ещё раз</button><button class="btn small green" id="fClose">Закрыть</button></div>`;
+    c.classList.add('show'); $('#fSkip').style.display = 'none';
+    $('#fAgain').onclick = () => start(); $('#fClose').onclick = close;
+    sfx.bwin();
+  }
+  function start() {
+    cancelAnimationFrame(raf);
+    stars = Array.from({length: 50}, () => ({x: Math.random(), y: Math.random(), sp: .5 + Math.random() * 2, ph: Math.random() * 6}));
+    li = -1; credits = false; $('#fCred').classList.remove('show'); $('#fCred').innerHTML = ''; $('#fSkip').style.display = '';
+    fit(); t0 = performance.now();
+    Music.battle(false); Music.battle(true, FINALE);
+    raf = requestAnimationFrame(frame);
+  }
+  function close() {
+    const r = resolve; if (!r) return;
+    cancelAnimationFrame(raf); clearInterval(lineT); resolve = null;
+    root.classList.remove('show'); Music.battle(false); r();
+  }
+  $('#fSkip').onclick = () => { t0 = performance.now() - END * 1000; li = LINES.length - 1; };
+  function play() {
+    return new Promise(res => { resolve = res; root.classList.add('show'); start(); });
+  }
+  return {play, get on() { return !!resolve; }};
+})();
+
 /* --- ошибка = битва + страница --- */
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function stepSlime(i) {
@@ -2118,22 +2333,14 @@ async function stepSlime(i) {
   bubble(els[i], SHOUTS[(Math.random() * SHOUTS.length) | 0]);
   fieldErrs++;
   setRin('shock');
-  const shielded = goldUntil > Date.now(); // золотое сердце защищает, если наступил, пока оно горит
   await wait(900);
   const pausedAt = Date.now();
-  const res = await Battle.run(shielded);
+  const res = await Battle.run(false);
   fieldT0 += Date.now() - pausedAt; // время битвы не идёт в зачёт уровня
-  let burned = false;
   const hs = $('#hearts').children;
   if (!res.won) {
-    if (shielded) {
-      burned = true; goldUntil = 0;
-      const h = hs[hearts - 1];
-      if (h) { const hr = h.getBoundingClientRect(); burst(hr.left + hr.width / 2, hr.top + hr.height / 2, 18, ['#FFE27A', '#F3B63F', '#FFF3C4'], 3.5, .1); }
-    } else {
-      hearts--;
-      if (hs[hearts]) { hs[hearts].classList.remove('pop'); void hs[hearts].offsetWidth; hs[hearts].classList.add('pop'); }
-    }
+    hearts--;
+    if (hs[hearts]) { hs[hearts].classList.remove('pop'); void hs[hearts].offsetWidth; hs[hearts].classList.add('pop'); }
   }
   rinBase = hearts <= 1 ? 'oops' : 'calm';
   setRin(res.won ? 'happy' : 'sad', 2200);
@@ -2146,7 +2353,7 @@ async function stepSlime(i) {
   persist(); updateHud(); updateAbil();
   await wait(350);
   sfx.page();
-  const head = res.won ? 'Слайм побеждён — сердце цело!' : burned ? 'Сгорело золотое сердце, настоящее цело' : 'Минус сердце. Новая страница';
+  const head = res.won ? 'Слайм побеждён — сердце цело!' : 'Сердце разбито. Новая страница';
   await modal(`<div class="mhead">${head}</div>` + pageHTML(pg, `стр. ${save.mistakes}`), [{text:'Записал', v:1}]);
   if (apg) {
     sfx.light(); haptic('ok'); setRin('happy', 2000);
@@ -2187,10 +2394,11 @@ async function win() {
     <div class="${rec ? 'rec' : ''}"><b>${fmtTime(save.best[L.id])}</b>${rec ? 'новый рекорд!' : 'рекорд'}</div></div>`;
   const shareText = `Я очистил «${L.name}» в «Дневнике сапёра» за ${fmtTime(time)}${fieldErrs ? `, разбудил ${fieldErrs} ${plural(fieldErrs, 'слайма', 'слаймов', 'слаймов')} и написал о каждом страницу в дневнике` : ' и не разбудил ни одного слайма'} 🍂 А ты сможешь?`;
   const v = await modal(`<div class="mhead">Поле чистое!</div>` + pageHTML(wp) + stats + `<button class="btn small alt sharebtn" id="shareBtn">Поделиться с друзьями</button>`,
-    last ? [{text:'Читать дневник', v:'diary', cls:'green'}] :
+    last ? [{text:'Дневник', v:'diary', cls:'alt'}, {text:'Финальная сцена', v:'finale', cls:'green'}] :
            [{text:'Меню', v:'menu', cls:'alt'}, {text:'Дальше', v:'next', cls:'green'}],
     box => { box.querySelector('#shareBtn').onclick = () => share(shareText); });
   if (v === 'next') startLevel(L.id + 1);
+  else if (v === 'finale') { await Finale.play(); openDiary('menu'); }
   else if (v === 'diary') openDiary('menu');
   else openMenu();
 }
@@ -2198,7 +2406,7 @@ async function lose() {
   over = true; revealAll(false); sfx.lose(); haptic('err');
   rinBase = 'sad'; setRin('sad');
   await wait(1000);
-  const v = await modal(`<div class="mhead">Сердца кончились</div><div class="mtext"><img class="face" src="${FACE.sad}" alt="">
+  const v = await modal(`<div class="mhead">Сердце разбито</div><div class="mtext"><img class="face" src="${FACE.sad}" alt="">
     Рин ушёл пить чай.<br>Завтра новое поле — дневник и способности остаются.
     <br><br><b>Страниц в дневнике: ${save.mistakes}</b></div>`,
     [{text:'Меню', v:'menu', cls:'alt'}, {text:'Новое поле', v:'again', cls:'green'}]);
@@ -2247,7 +2455,7 @@ $('#abLife').onclick = () => {
   updateHud(); updateAbil();
   const h = $('#hearts').children[hearts - 1];
   if (h) { const r = h.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 18, ['#FFE27A', '#F3B63F', '#FFF3C4'], 3.5, .08); }
-  toast('Золотое сердце на 15 секунд: проиграешь битву — сгорит оно, а не настоящее', 3200);
+  toast('Золотое сердце на 15 секунд: наступишь на слайма — битвы не будет', 3200);
 };
 $('#abSatan').onclick = () => {
   if (!abilGate('satan', 3)) return;
@@ -2291,7 +2499,8 @@ function openDiary(from) {
     html += `<div class="finale"><h3>Как новичок стал сапёром</h3>
       <p>Осень кончилась, слаймы ушли в лес.</p>
       <p>Рин приехал новичком, а уезжает с дневником на ${save.pages.length} ${plural(save.pages.length, 'страницу', 'страницы', 'страниц')}. ${m ? `${m} ${plural(m, 'ошибка', 'ошибки', 'ошибок')} — и каждая чему-то научила.` : 'Ни одной ошибки. Подозрительно.'}</p>
-      <q>Ошибки — часть пути к тому, чтобы стать сильнее.</q></div>`;
+      <q>Ошибки — часть пути к тому, чтобы стать сильнее.</q>
+      <button class="btn green" id="btnFinale">▶ Финальная сцена</button></div>`;
   }
   html += `<div class="prog"><b>Страниц-ошибок: ${m}</b>
     ${ABIL.map(a => `<div class="row ${m >= a.need ? '' : 'off'}"><i style="background-image:var(--spr-${a.spr})"></i>${a.need} стр. — ${a.desc}</div>`).join('')}
@@ -2301,6 +2510,7 @@ function openDiary(from) {
   if (!save.pages.length) html += `<div class="dempty">Пока пусто.<br>Ошибись — и тут появится первая страница. Серьёзно, это нормально.</div>`;
   else html += save.pages.slice().reverse().map(p => pageHTML(p, null, true)).join('');
   list.innerHTML = html; list.scrollTop = 0;
+  const fb = $('#btnFinale'); if (fb) fb.onclick = async () => { await Finale.play(); openDiary(from); };
 }
 $('#btnDiaryBack').onclick = goBack;
 $('#btnReset').onclick = async () => {
@@ -2321,7 +2531,7 @@ async function renderTrack(i, secs) {
   return {peak: +pk.toFixed(3), rms: +Math.sqrt(ss / d.length).toFixed(4), nan};
 }
 if (/[?&]debug/.test(location.search)) window.__dbg = {get cells() { return cells; }, get W() { return W; }, scene: setScene, spr: SPR, face: FACE, renderTrack, Music, Battle, TRACKS, BATTLE,
-  setPages(n) { save.mistakes = n; persist(); }, get hearts() { return hearts; }, get gold() { return goldUntil; }};
+  setPages(n) { save.mistakes = n; persist(); }, Finale, FINALE, get hearts() { return hearts; }, get gold() { return goldUntil; }};
 $('#menuRadio').innerHTML = radioHTML(true);
 openMenu();
 radioUI();
